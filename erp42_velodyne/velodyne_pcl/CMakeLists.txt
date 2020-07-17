@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(erp42_velodyne_pcl)
+project(velodyne_pcl)
 
 find_package(catkin REQUIRED COMPONENTS pcl_ros roslint)
 

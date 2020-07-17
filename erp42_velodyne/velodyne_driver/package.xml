@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>erp42_velodyne_driver</name>
+  <name>velodyne_driver</name>
   <version>1.6.0</version>
   <description>
     ROS device driver for Velodyne 3D LIDARs.

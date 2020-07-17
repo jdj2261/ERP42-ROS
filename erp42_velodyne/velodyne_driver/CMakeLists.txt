@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(erp42_velodyne_driver)
+project(velodyne_driver)
 
 # Set minimum C++ standard to C++11
 if (NOT "${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}")

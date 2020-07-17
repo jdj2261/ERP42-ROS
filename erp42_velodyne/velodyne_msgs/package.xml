@@ -1,25 +1,23 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>erp42_velodyne</name>
+  <name>velodyne_msgs</name>
   <version>1.6.0</version>
   <description>
-    Basic ROS support for the Velodyne 3D LIDARs.
+    ROS message definitions for Velodyne 3D LIDARs.
   </description>
   <maintainer email="josh.whitley@autoware.org">Josh Whitley</maintainer>
   <author>Jack O'Quin</author>
   <license>BSD</license>
-  <url type="website">http://www.ros.org/wiki/velodyne</url>
+
+  <url type="website">http://ros.org/wiki/velodyne_msgs</url>
   <url type="repository">https://github.com/ros-drivers/velodyne</url>
   <url type="bugtracker">https://github.com/ros-drivers/velodyne/issues</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>erp42_velodyne_driver</exec_depend>
-  <exec_depend>erp42_velodyne_laserscan</exec_depend>
-  <exec_depend>erp42_velodyne_msgs</exec_depend>
-  <exec_depend>erp42_velodyne_pointcloud</exec_depend>
+  <build_depend>message_generation</build_depend>
 
-  <export>
-    <metapackage/>
-  </export>
+  <depend>std_msgs</depend>
+
+  <exec_depend>message_runtime</exec_depend>
 </package>
