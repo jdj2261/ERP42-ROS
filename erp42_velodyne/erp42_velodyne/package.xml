@@ -14,10 +14,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>velodyne_driver</exec_depend>
-  <exec_depend>velodyne_laserscan</exec_depend>
-  <exec_depend>velodyne_msgs</exec_depend>
-  <exec_depend>velodyne_pointcloud</exec_depend>
+  <exec_depend>erp42_velodyne_driver</exec_depend>
+  <exec_depend>erp42_velodyne_laserscan</exec_depend>
+  <exec_depend>erp42_velodyne_msgs</exec_depend>
+  <exec_depend>erp42_velodyne_pointcloud</exec_depend>
 
   <export>
     <metapackage/>

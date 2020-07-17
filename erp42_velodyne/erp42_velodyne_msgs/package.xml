@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>velodyne_msgs</name>
+  <name>erp42_velodyne_msgs</name>
   <version>1.6.0</version>
   <description>
     ROS message definitions for Velodyne 3D LIDARs.

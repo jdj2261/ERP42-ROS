@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>velodyne_pointcloud</name>
+  <name>erp42_velodyne_pointcloud</name>
   <version>1.6.0</version>
   <description>
     Point cloud conversions for Velodyne 3D LIDARs.
