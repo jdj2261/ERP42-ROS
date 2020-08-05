@@ -12,6 +12,7 @@ ERP42Control::ERP42Control():
   m_send_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
   memset(m_send_msg.DATA, 0, sizeof(m_send_msg.DATA));
 
+
 }
 
 void ERP42Control::Init_node()
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
 
   ERP42Control erp_control;
 
-  ros::Rate loop(20);
+  ros::Rate loop(2);
 
   while(true)
   {
