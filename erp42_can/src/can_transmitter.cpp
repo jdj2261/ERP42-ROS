@@ -60,12 +60,12 @@ bool ERP42Transmitter::Connect()
 {
   this->m_TStatus = CAN_Initialize(PCAN_DEVICE, PCAN_BAUD_500K, 0, 0, 0);
 
-  if (this->m_TStatus != PCAN_ERROR_OK)
-  {
-    char error_message[50];
-    CAN_GetErrorText(this->m_TStatus, 0x09, error_message);
-    ROS_ERROR("%s\n",error_message);
-  }
+//  if (this->m_TStatus != PCAN_ERROR_OK)
+//  {
+//    char error_message[50];
+//    CAN_GetErrorText(this->m_TStatus, 0x09, error_message);
+//    ROS_ERROR("%s\n",error_message);
+//  }
 
   if (this->m_TStatus) return false;
   else return true;
@@ -96,6 +96,7 @@ int main(int argc, char* argv[])
       ROS_INFO(" Success Connection! ");
       break;
     }
+    else ROS_ERROR(" Not Connected ");
     loop.sleep();
   }
 

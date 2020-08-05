@@ -1,9 +1,8 @@
-
 ################################################################################
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(erp42_can)
+project(erp42_driver)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -14,6 +13,10 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  tf
   erp42_msgs
 )
 
@@ -41,7 +44,7 @@ link_libraries(
 # Declare catkin specific configuration to be passed to dependent projects
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs erp42_msgs
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs nav_msgs sensor_msgs tf erp42_msgs
 )
 
 ################################################################################
@@ -52,13 +55,12 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(can_transmitter_node src/can_transmitter.cpp)
-add_dependencies(can_transmitter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(can_transmitter_node ${catkin_LIBRARIES})
-
-add_executable(can_receiver_node src/can_receiver.cpp)
-add_dependencies(can_receiver_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(can_receiver_node ${catkin_LIBRARIES})
+add_executable(erp42_driver_node
+  src/erp42_driver.cpp
+  src/ERP42Interface/ERP42Interface.cpp
+)
+add_dependencies(erp42_driver_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(erp42_driver_node ${catkin_LIBRARIES})
 
 ################################################################################
 # Install

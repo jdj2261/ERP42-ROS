@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+
+<launch>	
+        <node pkg="erp42_driver" name="erp42_driver_node" type="erp42_driver_node" />
+</launch>

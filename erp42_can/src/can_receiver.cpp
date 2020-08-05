@@ -81,12 +81,12 @@ bool ERP42Receiver::Connect()
 {
   this->m_RStatus = CAN_Initialize(PCAN_DEVICE, PCAN_BAUD_500K, 0, 0, 0);
 
-  if (m_RStatus != PCAN_ERROR_OK)
-  {
-    char error_message[50];
-    CAN_GetErrorText(m_RStatus, 0x09, error_message);
-    ROS_ERROR("%s\n",error_message);
-  }
+//  if (m_RStatus != PCAN_ERROR_OK)
+//  {
+//    char error_message[50];
+//    CAN_GetErrorText(m_RStatus, 0x09, error_message);
+//    ROS_ERROR("%s\n",error_message);
+//  }
 
   if (this->m_RStatus) return false;
   else return true;
@@ -109,6 +109,7 @@ int main(int argc, char* argv[])
       ROS_INFO(" Success Connection! ");
       break;
     }
+    else ROS_ERROR(" Not Connected ");
     loop.sleep();
   }
 
