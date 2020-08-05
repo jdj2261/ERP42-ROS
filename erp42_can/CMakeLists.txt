@@ -52,9 +52,9 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(can_control src/can_control.cpp)
-add_dependencies(can_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(can_control ${catkin_LIBRARIES})
+add_executable(can_transmitter src/can_transmitter.cpp)
+add_dependencies(can_transmitter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(can_transmitter ${catkin_LIBRARIES})
 
 add_executable(can_receiver src/can_receiver.cpp)
 add_dependencies(can_receiver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

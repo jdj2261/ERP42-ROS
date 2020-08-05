@@ -11,6 +11,7 @@ add_message_files(
    CmdControl.msg
    FeedBack1.msg
    FeedBack2.msg
+   test.msg
 )
 
 generate_messages(

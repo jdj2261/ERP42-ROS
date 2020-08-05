@@ -18,7 +18,7 @@
 
 #include <erp42_msgs/FeedBack1.h>
 #include <erp42_msgs/FeedBack2.h>
-
+#include <erp42_msgs/test.h>
 
 // feedback
 typedef struct _erp42_to_pc_1
@@ -56,12 +56,13 @@ public:
     std::cout << " Receiver Finished... " << std::endl;
   }
 
-  void read();
-  void update();
+  bool Connect();
+  void Init_node();
+  void Read();
+  void Update();
 
 protected:
-  TPCANMsg m_RMessage1;
-  TPCANMsg m_RMessage2;
+  TPCANMsg m_RMessage;
 
   TPCANStatus m_RStatus;
 
@@ -69,12 +70,16 @@ protected:
   ERP2PC_2 m_erp2pc_2;
 
   ros::NodeHandle m_nh;
+  ros::Publisher m_pub_feedback1;
+  ros::Publisher m_pub_feedback2;
 
   erp42_msgs::FeedBack1 m_feedback1_msg;
   erp42_msgs::FeedBack2 m_feedback2_msg;
 
+  ros::Publisher m_pub_test;
+  erp42_msgs::test m_test_msg;
 
-};
+}; // class ERP42Receiver
 
 } // erp42
 } // unmansol

@@ -1,8 +1,8 @@
-#include "can_control.h"
+#include "can_transmitter.h"
 #include "can_variables.h"
 using namespace unmansol::erp42;
 
-ERP42Control::ERP42Control():
+ERP42Transmitter::ERP42Transmitter():
   m_nh("~"),
   m_AlvCnt(0)
 {
@@ -10,10 +10,10 @@ ERP42Control::ERP42Control():
   Init_node();
 }
 
-void ERP42Control::Init_data()
+void ERP42Transmitter::Init_data()
 {
-  m_TMessage.ID = 0x777;
-  m_TMessage.LEN = 8;
+  m_TMessage.ID = CAN_COMMAND_ID;
+  m_TMessage.LEN = CAN_DATA_LENGTH;
   m_TMessage.MSGTYPE = PCAN_MESSAGE_STANDARD;
   memset(m_TMessage.DATA, 0, sizeof(m_TMessage.DATA));
 
@@ -23,12 +23,12 @@ void ERP42Control::Init_data()
   m_pc2erp.brake = 0x00;
 }
 
-void ERP42Control::Init_node()
+void ERP42Transmitter::Init_node()
 {
-  m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Control::CmdCtrlMsgCallback, this);
+  m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Transmitter::CmdCtrlMsgCallback, this);
 }
 
-void ERP42Control::Write()
+void ERP42Transmitter::Write()
 {
   m_pc2erp.speed.speed[0] = m_pc2erp.speed._speed & 0xff;
   m_pc2erp.speed.speed[1] = (m_pc2erp.speed._speed & 0xff00) >> 8;
@@ -47,7 +47,6 @@ void ERP42Control::Write()
   {
     std::cout << std::hex << (int)m_TMessage.DATA[i] << " ";
   }
-
   std::cout << std::endl;
 
   m_TStatus = CAN_Write(PCAN_DEVICE, &m_TMessage);
@@ -57,17 +56,22 @@ void ERP42Control::Write()
   else ROS_INFO(" Success Write ");
 }
 
-bool ERP42Control::Connect()
+bool ERP42Transmitter::Connect()
 {
   this->m_TStatus = CAN_Initialize(PCAN_DEVICE, PCAN_BAUD_500K, 0, 0, 0);
 
-  //  std::cout << m_TStatus << std::endl;
-  //
+  if (this->m_TStatus != PCAN_ERROR_OK)
+  {
+    char error_message[50];
+    CAN_GetErrorText(this->m_TStatus, 0x09, error_message);
+    ROS_ERROR("%s\n",error_message);
+  }
+
   if (this->m_TStatus) return false;
   else return true;
 }
 
-void ERP42Control::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
+void ERP42Transmitter::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
 {
   m_pc2erp.MODE = msg.MorA + msg.EStop + msg.Gear;
   m_pc2erp.speed._speed = msg.KPH * SPEED_FACTOR;
@@ -78,17 +82,21 @@ void ERP42Control::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
 
 int main(int argc, char* argv[])
 {
-  ros::init(argc, argv, "can_control");
+  ros::init(argc, argv, "can_transmitter");
 
-  ERP42Control erp_control;
+  ERP42Transmitter erp_control;
 
   ros::Rate loop(20);
 
-  while(true)
+  while(ros::ok())
   {
     bool isConnect = erp_control.Connect();
-    if (isConnect) break;
-    else ROS_WARN(" Not Connect! ");
+    if (isConnect)
+    {
+      ROS_INFO(" Success Connection! ");
+      break;
+    }
+    loop.sleep();
   }
 
   while(ros::ok())

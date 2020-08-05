@@ -1,9 +1,9 @@
-#ifndef CAN_CONTROL_H
-#define CAN_CONTROL_H
+#ifndef CAN_TRANSMITTER_H
+#define CAN_TRANSMITTER_H
 
 /*
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
- * @file can_control.h
+ * @file can_transmitter.h
  *
  * @brief CAN data sending from upper to ERP42
  *
@@ -32,12 +32,12 @@ namespace unmansol
 {
 namespace erp42
 {
-class ERP42Control
+class ERP42Transmitter
 {
 
 public:
-  ERP42Control();
-  virtual ~ERP42Control()
+  ERP42Transmitter();
+  virtual ~ERP42Transmitter()
   {
     std::cout << " Control Finished... " << std::endl;
   }
@@ -45,9 +45,10 @@ public:
   bool Connect();
   void Init_data();
   void Init_node();
-  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
   void Write();
-  void Start();
+
+  // Callback (ROS)
+  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
 
 protected:
   TPCANMsg m_TMessage;
@@ -62,9 +63,9 @@ protected:
 
   uint8_t m_AlvCnt;
 
-};
+}; // class ERP42Transmitter
 
-} // erp42
-} // unmansol
+} // namespace erp42
+} // namespace unmansol
 
-#endif // CAN_CONTROL_H
+#endif // CAN_TRANSMITTER_H
