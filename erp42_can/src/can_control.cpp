@@ -6,18 +6,16 @@ ERP42Control::ERP42Control():
   m_nh("~")
 {
   Init_node();
-
-  m_send_msg.ID = 0x777;
-  m_send_msg.LEN = 8;
-  m_send_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
-  memset(m_send_msg.DATA, 0, sizeof(m_send_msg.DATA));
-
-
 }
 
 void ERP42Control::Init_node()
 {
   m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Control::CmdCtrlMsgCallback, this);
+
+  m_send_msg.ID = 0x777;
+  m_send_msg.LEN = 8;
+  m_send_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
+  memset(m_send_msg.DATA, 0, sizeof(m_send_msg.DATA));
 }
 
 void ERP42Control::Write()
@@ -53,12 +51,6 @@ bool ERP42Control::Connect()
   else return true;
 }
 
-void ERP42Control::Start()
-{
-  Write();
-  ROS_INFO("Start");
-}
-
 void ERP42Control::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
 {
   m_pc2erp.MODE = msg.MorA + msg.EStop + msg.Gear;
@@ -74,7 +66,7 @@ int main(int argc, char* argv[])
 
   ERP42Control erp_control;
 
-  ros::Rate loop(2);
+  ros::Rate loop(20);
 
   while(true)
   {
@@ -85,7 +77,7 @@ int main(int argc, char* argv[])
 
   while(ros::ok())
   {
-    erp_control.Start();
+    erp_control.Write();
     loop.sleep();
   }
 
