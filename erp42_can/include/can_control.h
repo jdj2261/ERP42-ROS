@@ -3,9 +3,9 @@
 
 /*
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
- * @file can_control.hpp
+ * @file can_control.h
  *
- * @brief Relay control using PCAN library
+ * @brief CAN data sending from upper to ERP42
  *
  * Created on: 2020. 8. 4
  * Contact: <jdj2261@unmansol.com>
@@ -18,7 +18,7 @@
 
 #include <erp42_msgs/CmdControl.h>
 
-#define PCAN_DEVICE	PCAN_PCIBUS1
+#define PCAN_DEVICE	PCAN_USBBUS1
 
 const uint8_t SPEED_FACTOR=10;
 const uint8_t STEER_FACTOR=71;
@@ -48,9 +48,9 @@ public:
   }
 
   bool Connect();
-  void init_node();
+  void Init_node();
   void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
-  void write();
+  void Write();
   void Start();
 
 protected:

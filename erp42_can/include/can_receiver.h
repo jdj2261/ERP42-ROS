@@ -5,7 +5,7 @@
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
  * @file can_reciever.h
  *
- * @brief Relay control using PCAN library
+ * @brief CAN data receiving from ERP42 to Upper
  *
  * Created on: 2020. 8. 4
  * Contact: <jdj2261@unmansol.com>

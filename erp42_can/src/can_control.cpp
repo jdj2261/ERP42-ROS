@@ -5,15 +5,21 @@ using namespace unmansol::erp42;
 ERP42Control::ERP42Control():
   m_nh("~")
 {
-  init_node();
+  Init_node();
+
+  m_send_msg.ID = 0x777;
+  m_send_msg.LEN = 8;
+  m_send_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
+  memset(m_send_msg.DATA, 0, sizeof(m_send_msg.DATA));
+
 }
 
-void ERP42Control::init_node()
+void ERP42Control::Init_node()
 {
   m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Control::CmdCtrlMsgCallback, this);
 }
 
-void ERP42Control::write()
+void ERP42Control::Write()
 {
   uint8_t AlvCnt = 0;
 
@@ -21,10 +27,6 @@ void ERP42Control::write()
   m_pc2erp.speed.speed[1] = (m_pc2erp.speed._speed & 0xff00) >> 8;
   m_pc2erp.steer.steer[0] = (m_pc2erp.steer._steer & 0xff);
   m_pc2erp.steer.steer[1] = (m_pc2erp.steer._steer & 0xff00) >> 8;
-
-  m_send_msg.ID = 0x777;
-  m_send_msg.LEN = 8;
-  m_send_msg.MSGTYPE = PCAN_MESSAGE_STANDARD;
 
   m_send_msg.DATA[0] = m_pc2erp.MODE;
   m_send_msg.DATA[1] = m_pc2erp.speed.speed[1];
@@ -35,28 +37,25 @@ void ERP42Control::write()
   m_send_msg.DATA[7] = AlvCnt++;
 
   m_TStatus = CAN_Write(PCAN_DEVICE, &m_send_msg);
+
+  if (m_TStatus != PCAN_ERROR_OK)
+    ROS_WARN(" Failed connect ");
 }
 
 bool ERP42Control::Connect()
 {
   this->m_TStatus = CAN_Initialize(PCAN_DEVICE, PCAN_BAUD_500K, 0, 0, 0);
 
+//  std::cout << m_TStatus << std::endl;
   //
-  if (!this->m_TStatus) return true;
-  else
-    return false;
+  if (this->m_TStatus) return false;
+  else return true;
 }
 
 void ERP42Control::Start()
 {
-  bool isConnect = Connect();
-
-  if (isConnect) write();
-  else
-  {
-    std::cout << " Not Connect !" << std::endl;
-  }
-
+  Write();
+  ROS_INFO("Start");
 }
 
 void ERP42Control::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
@@ -73,14 +72,19 @@ int main(int argc, char* argv[])
   ros::init(argc, argv, "can_control");
 
   ERP42Control erp_control;
-  bool isConnect = erp_control.Connect();
 
   ros::Rate loop(20);
 
+  while(true)
+  {
+    bool isConnect = erp_control.Connect();
+    if (isConnect) break;
+    else ROS_WARN(" Not Connect! ");
+  }
+
   while(ros::ok())
   {
-    if (isConnect) erp_control.Start();
-    else ROS_WARN(" Not Connect! ");
+    erp_control.Start();
     loop.sleep();
   }
 
