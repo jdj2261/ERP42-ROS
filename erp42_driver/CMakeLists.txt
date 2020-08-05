@@ -57,7 +57,7 @@ include_directories(
 
 add_executable(erp42_driver_node
   src/erp42_driver.cpp
-  src/ERP42Interface/ERP42Interface.cpp
+  src/ERP42Interface/erp42_interface.cpp
 )
 add_dependencies(erp42_driver_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(erp42_driver_node ${catkin_LIBRARIES})
