@@ -1,4 +1,5 @@
 #include "can_receiver.h"
+#include "can_variables.h"
 
 using namespace unmansol::erp42;
 

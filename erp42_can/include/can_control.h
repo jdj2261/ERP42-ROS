@@ -18,11 +18,6 @@
 
 #include <erp42_msgs/CmdControl.h>
 
-#define PCAN_DEVICE	PCAN_USBBUS1
-
-const uint8_t SPEED_FACTOR=10;
-const uint8_t STEER_FACTOR=71;
-
 // command
 typedef struct _pc_to_erp42
 {
@@ -48,13 +43,14 @@ public:
   }
 
   bool Connect();
+  void Init_data();
   void Init_node();
   void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
   void Write();
   void Start();
 
 protected:
-  TPCANMsg m_send_msg;
+  TPCANMsg m_TMessage;
   TPCANStatus m_TStatus;
 
   PC2ERP m_pc2erp;
@@ -63,6 +59,8 @@ protected:
   ros::Subscriber m_sub_command;
 
   erp42_msgs::CmdControl m_cmd_ctrl_msg;
+
+  uint8_t m_AlvCnt;
 
 };
 

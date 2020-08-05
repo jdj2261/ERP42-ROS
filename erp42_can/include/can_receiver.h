@@ -19,12 +19,8 @@
 #include <erp42_msgs/FeedBack1.h>
 #include <erp42_msgs/FeedBack2.h>
 
-#define PCAN_DEVICE	PCAN_PCIBUS1
 
-const uint8_t SPEED_FACTOR=10;
-const uint8_t STEER_FACTOR=71;
-
-// feedback1
+// feedback
 typedef struct _erp42_to_pc_1
 {
     uint8_t MODE;
@@ -64,9 +60,18 @@ public:
   void update();
 
 protected:
+  TPCANMsg m_RMessage1;
+  TPCANMsg m_RMessage2;
+
+  TPCANStatus m_RStatus;
+
+  ERP2PC_1 m_erp2pc_1;
+  ERP2PC_2 m_erp2pc_2;
+
   ros::NodeHandle m_nh;
-  TPCANMsg m_feedback1;
-  TPCANMsg m_feedback2;
+
+  erp42_msgs::FeedBack1 m_feedback1_msg;
+  erp42_msgs::FeedBack2 m_feedback2_msg;
 
 
 };
