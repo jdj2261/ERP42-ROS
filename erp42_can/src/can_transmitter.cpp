@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
   ERP42Transmitter erp_control;
 
-  ros::Rate loop(20);
+  ros::Rate loop(50); // 50Hz is 0.02s
 
   while(ros::ok())
   {
