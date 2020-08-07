@@ -12,7 +12,6 @@
  * Author: Daejong Jin (djjin)
  */
 
-
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h> // cmd_vel
 
@@ -38,15 +37,20 @@ public:
   void Read();
   void Update();
 
+  double m_odom_x;
+  double m_odom_y;
+  double m_odom_yaw;
+  double m_steer_angle;
+  double m_status;
+
 protected:
   ros::NodeHandle m_nh;
-  ros::Publisher m_pub_feedback1;
-  ros::Publisher m_pub_feedback2;
+
+  ros::Publisher m_pub_test;
 
   erp42_msgs::FeedBack1 m_feedback1_msg;
   erp42_msgs::FeedBack2 m_feedback2_msg;
 
-  ros::Publisher m_pub_test;
 
 }; // class ERP42Interface
 
