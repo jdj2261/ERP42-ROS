@@ -32,10 +32,12 @@ public:
     std::cout << " Interface Finished... " << std::endl;
   }
 
-  bool Connect();
-  void Init_node();
-  void Read();
-  void Update();
+  virtual void SetParams(double wheel_diameter_right, double wheel_diameter_left, double tred_width);
+  virtual int16_t GetEncoderPacket();
+  virtual void CalculateOdometry();
+  virtual void resetOdometry();
+  // Set new odometry.
+  virtual void setOdometry(double new_x, double new_y, double new_yaw);
 
   double m_odom_x;
   double m_odom_y;
