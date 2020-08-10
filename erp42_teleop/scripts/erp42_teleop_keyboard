@@ -91,13 +91,10 @@ class ERP42DriveKeyop:
         rospy.loginfo('\x1b[1M\rPress <ctrl-c> or <q> to exit')
         rospy.loginfo('\x1b[1M\r*********************************************')
         rospy.loginfo('\x1b[1M\r'
-                      '\033[34;1mSpeed: \033[32;1m%0.2f m/s, '
-                      '\033[34;1mSteer Angle: \033[32;1m%0.2f rad\033[0m',
-                      self.speed, self.steering_angle)
-        rospy.loginfo('\x1b[1M\r'
-                      '\033[34;1mEncoder : \033[32;1m%d, ',
-                      self.encoder)                      
-        print(self.encoder)
+                      '\033[34;1mSpeed: \033[32;1m%0.2f m/s\033[0m, '
+                      '\033[34;1mSteer Angle: \033[32;1m%0.2f rad\033[0m, '
+                      '\033[34;1mEncoder : \033[32;1m%d ',
+                      self.speed, self.steering_angle, self.encoder)
 
     def get_key(self):
         tty.setraw(sys.stdin.fileno())
