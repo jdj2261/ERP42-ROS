@@ -13,6 +13,8 @@
 
 #include <ERP42Interface/erp42_interface.h>
 #include <ros/ros.h>
+#include <nav_msgs/Odometry.h>    // odom
+#include <geometry_msgs/Twist.h>  // cmd_vel
 
 namespace unmansol
 {
@@ -27,15 +29,33 @@ public:
     std::cout << " Driver Finished... " << std::endl;
   }
 
+  void Init_param();
   void Init_node();
   void Update();
 
+  void encoder_test();
+
+  // Callback (ROS)
+  void CmdVelCallback(const geometry_msgs::Twist &msg);
+;
+
+private:
+  unmansol::erp42::ERP42Interface erp42_interface_;
+
 protected:
   ros::NodeHandle m_nh;
+  ros::Rate rate_;
+
   ros::Publisher m_pub_odom;
   ros::Publisher m_pub_steer;
+  ros::Publisher m_pub_command;
+
+  ros::Subscriber m_sub_cmd_vel;
 
   ros::Publisher m_pub_test;
+
+  ros::Duration m_delta_time;
+  ros::Time m_last_time;
 
 }; // class ERP42Driver
 
