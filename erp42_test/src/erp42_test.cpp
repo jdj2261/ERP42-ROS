@@ -17,8 +17,16 @@ void ERP42Test::Init_node()
 
 void ERP42Test::encoder_test()
 {
-  m_encoder_msg.encoder = m_cnt++;
+  m_cnt++;
+  m_encoder_msg.encoder = m_cnt+2;
   m_pub_test.publish(m_encoder_msg);
+
+  if (m_encoder_msg.encoder > 2000000000)
+    m_cnt = 0;
+  else if (m_encoder_msg.encoder < -200000000)
+    m_cnt = 0;
+
+
   std::cout << m_encoder_msg.encoder << std::endl;
 }
 

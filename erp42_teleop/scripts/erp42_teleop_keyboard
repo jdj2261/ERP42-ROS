@@ -44,8 +44,8 @@ key_bindings = {
 class ERP42DriveKeyop:
     def __init__(self, args):
 
-        max_speed = 50
-        max_steering_angle = 20
+        max_speed = 5 # m/s
+        max_steering_angle = 90
         max_encoder = 65535
 
         cmd_topic = '/erp42_can/command'
@@ -57,8 +57,8 @@ class ERP42DriveKeyop:
         self.encoder_range = [0, int(max_encoder)]
         for key in key_bindings:
             key_bindings[key] = \
-                    (key_bindings[key][0] * float(max_speed) / 5,
-                     key_bindings[key][1] * float(max_steering_angle) / 5,
+                    (key_bindings[key][0] * float(max_speed) / 10,
+                     key_bindings[key][1] * float(max_steering_angle) / 10,
                      key_bindings[key][2] * int(max_encoder) / 65535)
 
         self.speed = 0
@@ -86,13 +86,13 @@ class ERP42DriveKeyop:
         sys.stderr.write('\x1b[2J\x1b[H')
         rospy.loginfo('\x1b[1M\r*********************************************')
         rospy.loginfo('\x1b[1M\rUse arrows to change speed and steering angle')
-        rospy.loginfo('\x1b[1M\rUse "[" to Encoder Decrease and "]" to Increase')
+        rospy.loginfo('\x1b[1M\rUse "]" to Encoder Decrease and "\\" to Increase')
         rospy.loginfo('\x1b[1M\rUse space to brake and tab to align wheels')
         rospy.loginfo('\x1b[1M\rPress <ctrl-c> or <q> to exit')
         rospy.loginfo('\x1b[1M\r*********************************************')
         rospy.loginfo('\x1b[1M\r'
                       '\033[34;1mSpeed: \033[32;1m%0.2f m/s\033[0m, '
-                      '\033[34;1mSteer Angle: \033[32;1m%0.2f rad\033[0m, '
+                      '\033[34;1mSteer Angle: \033[32;1m%0.2f Deg\033[0m, '
                       '\033[34;1mEncoder : \033[32;1m%d ',
                       self.speed, self.steering_angle, self.encoder)
 
@@ -118,6 +118,7 @@ class ERP42DriveKeyop:
                     self.speed = self.speed + key_bindings[key][0]
                     self.steering_angle = \
                             self.steering_angle + key_bindings[key][1]
+#                    self.encoder = self.encoder + key_bindings[key][0]
                     self.encoder = self.encoder + key_bindings[key][2]
                     self.speed = clip(
                         self.speed, self.speed_range[0], self.speed_range[1])

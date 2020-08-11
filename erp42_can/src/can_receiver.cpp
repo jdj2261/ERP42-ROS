@@ -61,7 +61,10 @@ void ERP42Receiver::Update()
     m_feedback2_msg.brake_raw = m_RMessage.DATA[5];
     m_feedback2_msg.brake_echo = m_RMessage.DATA[6];
     m_feedback2_msg.brake_init_max = m_RMessage.DATA[7];
+
     m_pub_feedback2.publish(m_feedback2_msg);
+
+
     break;
 
   case TEST_ID:

@@ -38,6 +38,18 @@ inline double NORMALIZE(const T& z)
   return atan2(sin(z), cos(z));
 }
 
+template<typename T>
+inline double DEG2RAD(const T& a)
+{
+  return a * (M_PI / 180);
+}
+
+template<typename T>
+inline double RAD2DEG(const T& a)
+{
+  return a * (180 / M_PI);
+}
+
 int plus_or_minus(double value);
 
 namespace unmansol
@@ -76,6 +88,7 @@ protected:
 
   ros::Publisher m_pub_test;
   ros::Subscriber m_sub_encoder;
+  ros::Subscriber m_sub_steer;
 
   erp42_msgs::FeedBack2 m_feedback2_msg;
 
@@ -85,6 +98,7 @@ protected:
 
   // callback
   void EncoderCallback(const erp42_msgs::FeedBack2 &msg);
+  void SteerCallback(const erp42_msgs::CmdControl &msg);
 
   // member variable
   int32_t m_encoder;
@@ -92,6 +106,7 @@ protected:
   double m_wheel_pos;
   double m_delta_pos;
   double m_linear_vel;
+  double m_angular_vel;
 
   double m_wheel_radius = 0.265;
   double m_wheel_tread = 0.985;

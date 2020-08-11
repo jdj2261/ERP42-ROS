@@ -56,12 +56,12 @@ void ERP42Driver::encoder_test()
     m_delta_time = ros::Time::now() - m_last_time;
     m_last_time = ros::Time::now();
 
-    std::cout << m_delta_time << std::endl;
+    std::cout << "Loop Time : "<<m_delta_time << " ";
     double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*1e-9;
 
     erp42_interface_.CalculateOdometry(diff_time);
 
-    std::cout << erp42_interface_.m_delta_encoder << std::endl;
+//    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 
     ros::spinOnce();
     rate_.sleep();

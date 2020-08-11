@@ -14,4 +14,5 @@ const uint16_t CAN_FEEDBACK_ID_1=0x778;
 const uint16_t CAN_FEEDBACK_ID_2=0x779;
 const uint16_t TEST_ID=0x2B0;
 
+
 #endif // CAN_VARIABLES_H
