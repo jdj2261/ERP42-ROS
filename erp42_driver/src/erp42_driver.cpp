@@ -9,6 +9,9 @@ ERP42Driver::ERP42Driver():
 {
   Init_param();
   Init_node();
+  if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
+     ros :: console :: notifyLoggerLevelsChanged ();
+  }
 
   erp42_interface_.ResetOdometry();
 }
@@ -40,13 +43,23 @@ void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
   m_pub_steer = m_nh.advertise<geometry_msgs::Twist>("/steer_ctrl",1);
+  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>("/erp42_can/command",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
 
 void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
 {
+  // m/s to KPH
+  m_cmdctrl_msg.KPH = msg.linear.x;
+  m_cmdctrl_msg.Deg = msg.angular.z;
+  std::cout << msg.linear.x << std::endl;
+  m_pub_cmdcontrol.publish(m_cmdctrl_msg);
+  ROS_DEBUG("%0.2lf",msg.linear.x);
 
-
+  ROS_DEBUG_STREAM_NAMED("test",
+                         "Added values to command. "
+                         << "Ang: "   << m_cmdctrl_msg.KPH << ", "
+                         << "Lin: "   << m_cmdctrl_msg.Deg << ", ");
 }
 
 void ERP42Driver::encoder_test()
@@ -56,10 +69,11 @@ void ERP42Driver::encoder_test()
     m_delta_time = ros::Time::now() - m_last_time;
     m_last_time = ros::Time::now();
 
-    std::cout << "Loop Time : "<<m_delta_time << " ";
+//    std::cout << "Loop Time : "<<m_delta_time << " ";
     double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*1e-9;
 
     erp42_interface_.CalculateOdometry(diff_time);
+
 
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 

@@ -89,13 +89,13 @@ void ERP42Interface::CalculateOdometry(double delta_time)
   m_odom_x += m_delta_pos * cos(m_odom_yaw);
   m_odom_y += m_delta_pos * sin(m_odom_yaw);
 
-  std::cout << "Delta Pose: " << m_delta_pos << " ";
-  std::cout << "Linear Vel: " << m_linear_vel<< " ";
-  std::cout << "Angular Vel: " << m_steer_angle<< " ";
-  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
+//  std::cout << "Delta Pose: " << m_delta_pos << " ";
+//  std::cout << "Linear Vel: " << m_linear_vel<< " ";
+//  std::cout << "Angular Vel: " << m_steer_angle<< " ";
+//  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
   std::cout << "Odom X : " << m_odom_x << " ";
-  std::cout << "Odom Y : " << m_odom_y << " ";
-  std::cout << "Odom Yaw : " << m_odom_yaw << std::endl;
+  std::cout << " Y : " << m_odom_y << " ";
+  std::cout << " Yaw : " << m_odom_yaw << std::endl;
 
   if (isnan(m_delta_pos)){
       m_delta_pos = 0.0;
