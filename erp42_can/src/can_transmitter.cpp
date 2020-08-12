@@ -3,6 +3,7 @@
 using namespace unmansol::erp42;
 
 ERP42Transmitter::ERP42Transmitter():
+  m_enable_can(true),
   m_nh("~"),
   m_AlvCnt(0)
 {
@@ -25,6 +26,9 @@ void ERP42Transmitter::Init_data()
 
 void ERP42Transmitter::Init_node()
 {
+  m_nh.param("enable_can",enable_can,enable_can);
+  m_enable_can = enable_can;
+  std::cout << m_enable_can << std::endl;
   m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Transmitter::CmdCtrlMsgCallback, this);
 }
 
@@ -88,16 +92,19 @@ int main(int argc, char* argv[])
 
   ros::Rate loop(50); // 50Hz is 0.02s
 
-  while(ros::ok())
+  if (erp_control.m_enable_can)
   {
-    bool isConnect = erp_control.Connect();
-    if (isConnect)
+    while(ros::ok())
     {
-      ROS_INFO(" Success Connection! ");
-      break;
+      bool isConnect = erp_control.Connect();
+      if (isConnect)
+      {
+        ROS_INFO(" Success Connection! ");
+        break;
+      }
+      else ROS_ERROR(" Not Connected ");
+      loop.sleep();
     }
-    else ROS_ERROR(" Not Connected ");
-    loop.sleep();
   }
 
   while(ros::ok())

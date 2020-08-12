@@ -61,6 +61,8 @@ public:
   void Read();
   void Update();
 
+  bool isConnect;
+
 protected:
   TPCANMsg m_RMessage;
 
