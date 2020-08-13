@@ -9,15 +9,15 @@ ERP42Driver::ERP42Driver():
 {
   Init_param();
   Init_node();
-  if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
-     ros :: console :: notifyLoggerLevelsChanged ();
-  }
-
   erp42_interface_.ResetOdometry();
 }
 
 void ERP42Driver::Init_param()
 {
+  if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
+     ros :: console :: notifyLoggerLevelsChanged ();
+  }
+
   // initialize [m]
   double wheel_radius {0.265};
   double wheel_base {1.040};
