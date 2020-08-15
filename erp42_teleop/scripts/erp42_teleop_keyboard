@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 '''
 erp42_drive_keyop.py:
@@ -14,6 +15,7 @@ import rospy
 import roslib
 from erp42_msgs.msg import CmdControl, FeedBack1, FeedBack2
 from std_msgs.msg import Float64
+from geometry_msgs.msg import Twist
 import sys, select, termios, tty
 import thread
 from numpy import clip
@@ -36,7 +38,7 @@ key_bindings = {
     '\x43' : ( 0.0 ,-1.0, 0),
     '\x44' : ( 0.0 , 1.0, 0),
     '\x5D' : ( 0.0 , 0.0, -1.0),
-    '\x5C' : ( 0.0 , 0.0, 1.0),    
+    '\x5C' : ( 0.0 , 0.0, 1.0),
     '\x20' : ( 0.0 , 0.0, 0.0),
     '\x09' : ( 0.0 , 0.0, 0.0)
     }
@@ -45,10 +47,11 @@ class ERP42DriveKeyop:
     def __init__(self, args):
 
         max_speed = 5 # m/s
-        max_steering_angle = 90
+        max_steering_angle = 20
         max_encoder = 65535
 
-        cmd_topic = '/erp42_can/command'
+        cmd_vel_topic = '/cmd_vel'
+        cmd_control_topic = '/erp42_can/command'
         encoder_topic = '/erp42_can/feedback2'
 
         self.speed_range = [0, float(max_speed)]
@@ -65,7 +68,7 @@ class ERP42DriveKeyop:
         self.steering_angle = 0
         self.encoder = 0
         self.cmd_pub = rospy.Publisher(
-            cmd_topic, CmdControl, queue_size=1)
+            cmd_control_topic, CmdControl, queue_size=1)
         self.encoder_pub = rospy.Publisher(
             encoder_topic, FeedBack2, queue_size=1)
         rospy.Timer(rospy.Duration(1.0/50.0), self.pub_callback, oneshot=False)

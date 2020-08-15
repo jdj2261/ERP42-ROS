@@ -47,7 +47,6 @@ void ERP42Driver::Init_param()
 void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
-  m_pub_steer = m_nh.advertise<geometry_msgs::Twist>("/steer_ctrl",1);
   m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>("/erp42_can/command",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
@@ -55,19 +54,39 @@ void ERP42Driver::Init_node()
 void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
 {
   // m/s to KPH
-  m_cmdctrl_msg.KPH = msg.linear.x;
-  m_cmdctrl_msg.Deg = msg.angular.z;
-  std::cout << msg.linear.x << std::endl;
+  double linear_vel = msg.linear.x;
+  double angular_vel = msg.angular.z;
+
+  if (linear_vel == 0.0 || angular_vel == 0.0)
+  {
+    linear_vel = 0.0;
+    angular_vel = 0.0;
+  }
+
+  double radius = linear_vel / angular_vel;
+  double steering_angle = atan(erp42_interface_.m_wheel_base / radius);
+
+  if (isnan(radius))
+  {
+    radius = 0.0;
+    steering_angle = 0.0;
+  }
+
+  std::cout << radius << std::endl;
+
+  m_cmdctrl_msg.KPH = (uint16_t)MPS2KPH(msg.linear.x);
+  m_cmdctrl_msg.Deg = (int16_t)RAD2DEG(steering_angle);
+
   m_pub_cmdcontrol.publish(m_cmdctrl_msg);
-  ROS_DEBUG("%0.2lf",msg.linear.x);
+//  ROS_DEBUG("%0.2lf",msg.linear.x);
 
   ROS_DEBUG_STREAM_NAMED("test",
                          "Added values to command. "
-                         << "Ang: "   << m_cmdctrl_msg.KPH << ", "
-                         << "Lin: "   << m_cmdctrl_msg.Deg << ", ");
+                         << "KPH: "   << m_cmdctrl_msg.KPH << ", "
+                         << "DEG: "   << m_cmdctrl_msg.Deg << ", ");
 }
 
-void ERP42Driver::update(ros::Time current_time)
+void ERP42Driver::Update(ros::Time current_time)
 {
   geometry_msgs::TransformStamped odom_trans;
   nav_msgs::Odometry odom;
@@ -100,7 +119,7 @@ void ERP42Driver::update(ros::Time current_time)
 
 }
 
-void ERP42Driver::run()
+void ERP42Driver::Run()
 {
   while(m_nh.ok())
   {
@@ -112,7 +131,7 @@ void ERP42Driver::run()
     double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*1e-9;
 
     erp42_interface_.CalculateOdometry(diff_time);
-    update(m_current_time);
+    Update(m_current_time);
 
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 

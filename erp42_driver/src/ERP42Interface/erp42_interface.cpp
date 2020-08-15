@@ -10,6 +10,7 @@ ERP42Interface::ERP42Interface():
   m_odom_yaw(0.0),
   m_linear_vel(0.0),
   m_angular_vel(0.0),
+  m_wheel_base(0.0),
   m_steer_angle(0.0),
   m_delta_encoder(0),
   m_nh("~"),
@@ -25,7 +26,7 @@ void ERP42Interface::Init_node()
   // test
   m_sub_steer   = m_nh.subscribe("/erp42_can/command",1, &ERP42Interface::SteerCallback, this);
   // real
-//  m_sub_steer   = m_nh.subscribe("/erp42_can/feedback1",1, &ERP42Interface::SteerCallback, this);
+//  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
   m_sub_encoder = m_nh.subscribe("/erp42_can/feedback2",1,&ERP42Interface::EncoderCallback, this);
 }
 
@@ -97,9 +98,9 @@ void ERP42Interface::CalculateOdometry(double delta_time)
 //  std::cout << "Linear Vel: " << m_linear_vel<< " ";
 //  std::cout << "Angular Vel: " << m_steer_angle<< " ";
 //  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
-  std::cout << "Odom X : " << m_odom_x << " ";
-  std::cout << " Y : " << m_odom_y << " ";
-  std::cout << " Yaw : " << m_odom_yaw << std::endl;
+//  std::cout << "Odom X : " << m_odom_x << " ";
+//  std::cout << " Y : " << m_odom_y << " ";
+//  std::cout << " Yaw : " << m_odom_yaw << std::endl;
 
 
   if (isnan(m_delta_pos)){

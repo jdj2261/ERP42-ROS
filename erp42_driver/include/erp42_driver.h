@@ -33,10 +33,9 @@ public:
 
   void Init_param();
   void Init_node();
-  void Update();
 
-  void run();
-  void update(ros::Time current_time);
+  void Run();
+  void Update(ros::Time current_time);
 
   // Callback (ROS)
   void CmdVelCallback(const geometry_msgs::Twist &msg);
@@ -50,7 +49,6 @@ protected:
   ros::Rate rate_;
 
   ros::Publisher m_pub_odom;
-  ros::Publisher m_pub_steer;
   ros::Publisher m_pub_cmdcontrol;
   ros::Publisher m_pub_test;
 

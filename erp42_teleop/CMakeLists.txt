@@ -10,6 +10,8 @@ catkin_package(
   LIBRARIES
   CATKIN_DEPENDS
     rospy
+    geometry_msgs
+    ackermann_msgs
   DEPENDS
 )
 

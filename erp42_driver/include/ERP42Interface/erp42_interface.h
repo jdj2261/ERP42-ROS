@@ -53,13 +53,13 @@ inline double RAD2DEG(const T& a)
 template <typename T>
 inline double KPH2MPS(const T& a)
 {
-  return a * 3.6; // 3600/1000
+  return a * 0.2778; // 1000/3600
 }
 
 template <typename T>
 inline double MPS2KPH(const T& a)
 {
-  return a * 0.2778; // 1000/3600
+  return a * 3.6; // 3600/1000
 }
 
 int plus_or_minus(double value);
@@ -93,6 +93,7 @@ public:
   double m_linear_vel;
   double m_angular_vel;
 
+  double m_wheel_base = 1.040;
   double m_steer_angle;
   double m_status;
 
@@ -124,7 +125,7 @@ protected:
 
   double m_wheel_radius = 0.265;
   double m_wheel_tread = 0.985;
-  double m_wheel_base = 1.040;
+
   double m_max_vel = 5.0;
   double m_min_vel = -5.0;
   double m_max_steer_angle = 28.169;

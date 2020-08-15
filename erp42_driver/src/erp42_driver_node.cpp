@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
   ros::init(argc, argv, "erp42_driver");
 
   ERP42Driver erp_driver;
-  erp_driver.run();
+  erp_driver.Run();
 
   return 0;
 }
