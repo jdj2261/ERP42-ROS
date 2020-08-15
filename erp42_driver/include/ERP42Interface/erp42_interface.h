@@ -50,6 +50,18 @@ inline double RAD2DEG(const T& a)
   return a * (180 / M_PI);
 }
 
+template <typename T>
+inline double KPH2MPS(const T& a)
+{
+  return a * 3.6; // 3600/1000
+}
+
+template <typename T>
+inline double MPS2KPH(const T& a)
+{
+  return a * 0.2778; // 1000/3600
+}
+
 int plus_or_minus(double value);
 
 namespace unmansol
@@ -78,6 +90,9 @@ public:
   double m_odom_y;
   double m_odom_yaw;
 
+  double m_linear_vel;
+  double m_angular_vel;
+
   double m_steer_angle;
   double m_status;
 
@@ -87,8 +102,8 @@ protected:
   ros::NodeHandle m_nh;
 
   ros::Publisher m_pub_test;
-  ros::Subscriber m_sub_encoder;
   ros::Subscriber m_sub_steer;
+  ros::Subscriber m_sub_encoder;
 
   erp42_msgs::FeedBack2 m_feedback2_msg;
 
@@ -105,8 +120,7 @@ protected:
   int32_t m_last_encoder;
   double m_wheel_pos;
   double m_delta_pos;
-  double m_linear_vel;
-  double m_angular_vel;
+
 
   double m_wheel_radius = 0.265;
   double m_wheel_tread = 0.985;

@@ -43,8 +43,8 @@ void ERP42Receiver::Update()
     m_feedback1_msg.MorA  = m_RMessage.DATA[0] & 0x01;
     m_feedback1_msg.EStop = m_RMessage.DATA[0] & 0x02;
     m_feedback1_msg.Gear  = m_RMessage.DATA[0] & 0x0c;
-    m_feedback1_msg.speed = (m_RMessage.DATA[2] & 0xff) << 8  | (m_RMessage.DATA[1] & 0xff);
-    m_feedback1_msg.steer = (m_RMessage.DATA[4] & 0xff) << 8  | (m_RMessage.DATA[3] & 0xff);;
+    m_feedback1_msg.speed = ((m_RMessage.DATA[2] & 0xff) << 8  | (m_RMessage.DATA[1] & 0xff))/SPEED_FACTOR;
+    m_feedback1_msg.steer = ((m_RMessage.DATA[4] & 0xff) << 8  | (m_RMessage.DATA[3] & 0xff))/STEER_FACTOR;
     m_feedback1_msg.brake = m_RMessage.DATA[5];
     m_feedback1_msg.alive = m_RMessage.DATA[7];
     m_pub_feedback1.publish(m_feedback1_msg);

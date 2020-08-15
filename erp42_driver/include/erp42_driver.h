@@ -14,6 +14,7 @@
 #include <ERP42Interface/erp42_interface.h>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>    // odom
+#include <tf/transform_broadcaster.h> //tf
 #include <geometry_msgs/Twist.h>  // cmd_vel
 #include <ros/console.h>
 
@@ -34,7 +35,8 @@ public:
   void Init_node();
   void Update();
 
-  void encoder_test();
+  void run();
+  void update(ros::Time current_time);
 
   // Callback (ROS)
   void CmdVelCallback(const geometry_msgs::Twist &msg);
@@ -50,15 +52,19 @@ protected:
   ros::Publisher m_pub_odom;
   ros::Publisher m_pub_steer;
   ros::Publisher m_pub_cmdcontrol;
+  ros::Publisher m_pub_test;
 
   ros::Subscriber m_sub_cmd_vel;
 
-  ros::Publisher m_pub_test;
+  tf::TransformBroadcaster m_odom_broadcaster;
 
   ros::Duration m_delta_time;
+  ros::Time m_current_time;
   ros::Time m_last_time;
 
   erp42_msgs::CmdControl m_cmdctrl_msg;
+
+  double m_last_odom_x;
 
 }; // class ERP42Driver
 

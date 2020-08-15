@@ -5,7 +5,11 @@ using namespace unmansol::erp42;
 ERP42Driver::ERP42Driver():
   m_nh("~"),
   rate_(50),
-  m_last_time(0.0)
+  m_odom_broadcaster{},
+  m_current_time(0.0),
+  m_last_time(0.0),
+  m_last_odom_x(0.0)
+
 {
   Init_param();
   Init_node();
@@ -14,6 +18,7 @@ ERP42Driver::ERP42Driver():
 
 void ERP42Driver::Init_param()
 {
+  // DEBUG MODE
   if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
      ros :: console :: notifyLoggerLevelsChanged ();
   }
@@ -62,18 +67,52 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
                          << "Lin: "   << m_cmdctrl_msg.Deg << ", ");
 }
 
-void ERP42Driver::encoder_test()
+void ERP42Driver::update(ros::Time current_time)
+{
+  geometry_msgs::TransformStamped odom_trans;
+  nav_msgs::Odometry odom;
+  geometry_msgs::Quaternion odom_quat {tf::createQuaternionMsgFromYaw(erp42_interface_.m_odom_yaw)};
+
+  odom_trans.header.stamp = current_time;
+  odom_trans.header.frame_id = "odom";
+  odom_trans.child_frame_id = "base_link";
+
+  odom_trans.transform.translation.x = erp42_interface_.m_odom_x;
+  odom_trans.transform.translation.y = erp42_interface_.m_odom_y;
+  odom_trans.transform.translation.z = 0.0;
+  odom_trans.transform.rotation = odom_quat;
+
+  odom.header.stamp = current_time;
+  odom.header.frame_id = "odom";
+
+  odom.pose.pose.position.x = erp42_interface_.m_odom_x;
+  odom.pose.pose.position.y = erp42_interface_.m_odom_y;
+  odom.pose.pose.position.z = 0;
+  odom.pose.pose.orientation = odom_quat;
+
+  odom.child_frame_id = "base_link";
+  odom.twist.twist.linear.x = erp42_interface_.m_linear_vel;
+  odom.twist.twist.linear.y = 0;
+  odom.twist.twist.angular.z = erp42_interface_.m_angular_vel;
+
+  m_odom_broadcaster.sendTransform(odom_trans);
+  m_pub_odom.publish(odom);
+
+}
+
+void ERP42Driver::run()
 {
   while(m_nh.ok())
   {
-    m_delta_time = ros::Time::now() - m_last_time;
-    m_last_time = ros::Time::now();
+    m_current_time = ros::Time::now();
+    m_delta_time = m_current_time - m_last_time;
+    m_last_time = m_current_time;
 
 //    std::cout << "Loop Time : "<<m_delta_time << " ";
     double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*1e-9;
 
     erp42_interface_.CalculateOdometry(diff_time);
-
+    update(m_current_time);
 
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 

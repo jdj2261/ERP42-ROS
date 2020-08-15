@@ -50,7 +50,7 @@ public:
   // Callback (ROS)
   void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
 
-  bool m_enable_can;
+  bool is_enable_can;
 
 protected:
   TPCANMsg m_TMessage;

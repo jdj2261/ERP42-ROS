@@ -3,7 +3,7 @@
 using namespace unmansol::erp42;
 
 ERP42Transmitter::ERP42Transmitter():
-  m_enable_can(true),
+  is_enable_can(true),
   m_nh("~"),
   m_AlvCnt(0)
 {
@@ -27,8 +27,8 @@ void ERP42Transmitter::Init_data()
 void ERP42Transmitter::Init_node()
 {
   m_nh.param("enable_can",enable_can,enable_can);
-  m_enable_can = enable_can;
-  std::cout << m_enable_can << std::endl;
+  is_enable_can = enable_can;
+  std::cout << is_enable_can << std::endl;
   m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Transmitter::CmdCtrlMsgCallback, this);
 }
 
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 
   ros::Rate loop(50); // 50Hz is 0.02s
 
-  if (erp_control.m_enable_can)
+  if (erp_control.is_enable_can)
   {
     while(ros::ok())
     {
