@@ -1,153 +1,289 @@
 #!/usr/bin/env python
+
 from __future__ import print_function
 
-'''
-erp42_drive_keyop.py:
-    A ros keyboard teleoperation script for erp42 robots
-'''
+import threading
 
-__author__ = 'Jin DaeJong'
-__license__ = 'Unmanned Solution'
-__maintainer__ = 'DJ JIN'
-__email__ = 'djjin@unmansol.com'
-
+import roslib; roslib.load_manifest('teleop_twist_keyboard')
 import rospy
-import roslib
-from erp42_msgs.msg import CmdControl, FeedBack1, FeedBack2
-from std_msgs.msg import Float64
-from geometry_msgs.msg import Twist
-import sys, select, termios, tty
-import thread
 from numpy import clip
 
-control_keys = {
+from geometry_msgs.msg import Twist
+from erp42_msgs.msg import CmdControl
 
-    'up'    : '\x41',
-    'down'  : '\x42',
-    'right' : '\x43',
-    'left'  : '\x44',
-    ']'     : '\x5D',
-    'backslash'  : '\x5C',
-    'space' : '\x20',
-    'tab'   : '\x09'
+import sys, select, termios, tty
+import keyboard
+
+msg = """
+Reading from the keyboard  and Publishing to Twist!
+---------------------------
+Moving around:
+   u    i    o
+   j    k    l
+   m    ,    .
+For Holonomic mode (strafing), hold down the shift key:
+---------------------------
+   U    I    O
+   J    K    L
+   M    <    >
+t : up (+z)
+b : down (-z)
+anything else : stop
+q/z : increase/decrease max speeds by 10%
+w/x : increase/decrease only linear speed by 10%
+e/c : increase/decrease only angular speed by 10%
+CTRL-C to quit
+"""
+
+moveBindings = {
+        'i':(1,0,0,0),
+        'o':(1,0,0,-1),
+        'j':(0,0,0,1),
+        'l':(0,0,0,-1),
+        'u':(1,0,0,1),
+        ',':(-1,0,0,0),
+        '.':(-1,0,0,1),
+        'm':(-1,0,0,-1),
+        'O':(1,-1,0,0),
+        'I':(1,0,0,0),
+        'J':(0,1,0,0),
+        'L':(0,-1,0,0),
+        'U':(1,1,0,0),
+        '<':(-1,0,0,0),
+        '>':(-1,-1,0,0),
+        'M':(-1,1,0,0),
+        't':(0,0,1,0),
+        'b':(0,0,-1,0),
     }
 
-key_bindings = {
-    '\x41' : ( 1.0 , 0.0, 0),
-    '\x42' : (-1.0 , 0.0, 0),
-    '\x43' : ( 0.0 ,-1.0, 0),
-    '\x44' : ( 0.0 , 1.0, 0),
-    '\x5D' : ( 0.0 , 0.0, -1.0),
-    '\x5C' : ( 0.0 , 0.0, 1.0),
-    '\x20' : ( 0.0 , 0.0, 0.0),
-    '\x09' : ( 0.0 , 0.0, 0.0)
+speedBindings={
+        'q':(1.1,1.1),
+        'z':(.9,.9),
+        'w':(1.1,1),
+        'x':(.9,1),
+        'e':(1,1.1),
+        'c':(1,.9),
     }
 
-class ERP42DriveKeyop:
-    def __init__(self, args):
+keyBindings={
+        '8' : ( 1.0 , 0.0, 0),
+        '5' : ( -1.0 , 0.0, 0),
+        '4' : ( 0.0 , 1.0, 0),
+        '6' : ( 0.0 , -1.0, 0),
+        '2' : ( 0.0 , 0.0, 1.0)
+    }
 
-        max_speed = 5 # m/s
+
+
+
+class PublishThread(threading.Thread):
+    def __init__(self, rate):
+        super(PublishThread, self).__init__()
+
+        max_speed = 5 # Km/h
         max_steering_angle = 20
-        max_encoder = 65535
+        max_Brake = 100
 
         cmd_vel_topic = '/cmd_vel'
         cmd_control_topic = '/erp42_can/command'
-        encoder_topic = '/erp42_can/feedback2'
 
         self.speed_range = [0, float(max_speed)]
-        self.steering_angle_range = [-float(max_steering_angle),
-                                     float(max_steering_angle)]
-        self.encoder_range = [0, int(max_encoder)]
-        for key in key_bindings:
-            key_bindings[key] = \
-                    (key_bindings[key][0] * float(max_speed) / 10,
-                     key_bindings[key][1] * float(max_steering_angle) / 10,
-                     key_bindings[key][2] * int(max_encoder) / 65535)
+        self.steering_angle_range = [-float(max_steering_angle),float(max_steering_angle)]
+        self.Brake_range = [0, int(max_Brake)]
+        for key in keyBindings:
+            keyBindings[key] = \
+                    (keyBindings[key][0] * float(max_speed) / 5,
+                     keyBindings[key][1] * float(max_steering_angle) / 10,
+                     keyBindings[key][2] * int(max_Brake) / 50)
 
-        self.speed = 0
-        self.steering_angle = 0
-        self.encoder = 0
-        self.cmd_pub = rospy.Publisher(
-            cmd_control_topic, CmdControl, queue_size=1)
-        self.encoder_pub = rospy.Publisher(
-            encoder_topic, FeedBack2, queue_size=1)
-        rospy.Timer(rospy.Duration(1.0/50.0), self.pub_callback, oneshot=False)
-        self.print_state()
-        self.key_loop()
+        self.publisher = rospy.Publisher(cmd_vel_topic, Twist, queue_size = 1)
+        self.x = 0.0
+        self.y = 0.0
+        self.z = 0.0
+        self.th = 0.0
+        self.speed = 0.0
+        self.turn = 0.0
 
-    def pub_callback(self, event):
+        self.cmd_pub = rospy.Publisher(cmd_control_topic, CmdControl, queue_size=1)
+        self.KPH = 0
+        self.Deg = 0
+        self.Brake = 0
+
+        self.condition = threading.Condition()
+        self.done = False
+
+        # Set timeout to None if rate is 0 (causes new_message to wait forever
+        # for new data to publish)
+        if rate != 0.0:
+            self.timeout = 1.0 / rate
+        else:
+            self.timeout = None
+
+        self.start()
+
+    def wait_for_subscribers(self):
+        i = 0
+        while not rospy.is_shutdown() and self.publisher.get_num_connections() == 0:
+            if i == 4:
+                print("Waiting for subscriber to connect to {}".format(self.publisher.name))
+            rospy.sleep(0.5)
+            i += 1
+            i = i % 5
+        if rospy.is_shutdown():
+            raise Exception("Got shutdown request before subscribers connected")
+
+    def update(self, x, y, z, th, speed, turn, KPH, Deg, Brake):
+        self.condition.acquire()
+        self.x = x
+        self.y = y
+        self.z = z
+        self.th = th
+        self.speed = speed
+        self.turn = turn
+        self.KPH = KPH
+        self.Deg = Deg
+        self.Brake = Brake
+        # Notify publish thread that we have a new message.
+        self.condition.notify()
+        self.condition.release()
+
+    def stop(self):
+        self.done = True
+        self.update(0, 0, 0, 0, 0, 0, 0, 0, 0)
+        self.join()
+
+    def run(self):
+        twist = Twist()
         erp42_cmd_msg = CmdControl()
-        erp42_cmd_msg.KPH = self.speed
-        erp42_cmd_msg.Deg = self.steering_angle
+        while not self.done:
+            self.condition.acquire()
+            # Wait for a new message or timeout.
+            self.condition.wait(self.timeout)
+
+            # Copy state into twist message.
+            twist.linear.x = self.x * self.speed
+            twist.linear.y = self.y * self.speed
+            twist.linear.z = self.z * self.speed
+            twist.angular.x = 0
+            twist.angular.y = 0
+            twist.angular.z = self.th * self.turn
+
+            erp42_cmd_msg.KPH = self.KPH
+            erp42_cmd_msg.Deg = self.Deg
+            erp42_cmd_msg.brake = self.Brake
+
+            self.condition.release()
+
+            # Publish.
+            self.publisher.publish(twist)
+            self.cmd_pub.publish(erp42_cmd_msg)
+
+        # Publish stop message when thread exits.
+        twist.linear.x = 0
+        twist.linear.y = 0
+        twist.linear.z = 0
+        twist.angular.x = 0
+        twist.angular.y = 0
+        twist.angular.z = 0
+        erp42_cmd_msg.KPH = 0
+        erp42_cmd_msg.Deg = 0
+        erp42_cmd_msg.brake = 0
+
+        self.publisher.publish(twist)
         self.cmd_pub.publish(erp42_cmd_msg)
 
-        encoder_msg = FeedBack2()
-        encoder_msg.encoder = self.encoder
-        self.encoder_pub.publish(encoder_msg)
-
-    def print_state(self):
-        sys.stderr.write('\x1b[2J\x1b[H')
-        rospy.loginfo('\x1b[1M\r*********************************************')
-        rospy.loginfo('\x1b[1M\rUse arrows to change speed and steering angle')
-        rospy.loginfo('\x1b[1M\rUse "]" to Encoder Decrease and "\\" to Increase')
-        rospy.loginfo('\x1b[1M\rUse space to brake and tab to align wheels')
-        rospy.loginfo('\x1b[1M\rPress <ctrl-c> or <q> to exit')
-        rospy.loginfo('\x1b[1M\r*********************************************')
-        rospy.loginfo('\x1b[1M\r'
-                      '\033[34;1mSpeed: \033[32;1m%0.2f m/s\033[0m, '
-                      '\033[34;1mSteer Angle: \033[32;1m%0.2f Deg\033[0m, '
-                      '\033[34;1mEncoder : \033[32;1m%d ',
-                      self.speed, self.steering_angle, self.encoder)
-
-    def get_key(self):
-        tty.setraw(sys.stdin.fileno())
-        select.select([sys.stdin], [], [], 0)
-        key = sys.stdin.read(1)
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
-        return key
+def getKey(key_timeout):
+    tty.setraw(sys.stdin.fileno())
+    select.select([sys.stdin], [], [], 0)
+    key = sys.stdin.read(1)
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    return key
 
 
-    def key_loop(self):
-        self.settings = termios.tcgetattr(sys.stdin)
-        while 1:
-            key = self.get_key()
-            if key in key_bindings.keys():
-                if key == control_keys['space']:
-                    self.speed = 0.0
-                    self.encoder = 0
-                elif key == control_keys['tab']:
-                    self.steering_angle = 0.0
-                else:
-                    self.speed = self.speed + key_bindings[key][0]
-                    self.steering_angle = \
-                            self.steering_angle + key_bindings[key][1]
-#                    self.encoder = self.encoder + key_bindings[key][0]
-                    self.encoder = self.encoder + key_bindings[key][2]
-                    self.speed = clip(
-                        self.speed, self.speed_range[0], self.speed_range[1])
-                    self.steering_angle = clip(
-                        self.steering_angle,
-                        self.steering_angle_range[0],
-                        self.steering_angle_range[1])
-                    self.encoder = clip(
-                        self.encoder, self.encoder_range[0], self.encoder_range[1])
+def vels(speed, turn, KPH):
+    return "currently:\tspeed %s\tturn %s %s" % (speed,turn,KPH)
 
-                self.print_state()
-            elif key == '\x03' or key == '\x71':  # ctr-c or q
-                break
+if __name__=="__main__":
+    settings = termios.tcgetattr(sys.stdin)
+
+    rospy.init_node('teleop_twist_keyboard')
+
+    speed = rospy.get_param("~speed", 0.5)
+    turn = rospy.get_param("~turn", 1.0)
+    repeat = rospy.get_param("~repeat_rate", 50.0)
+    key_timeout = rospy.get_param("~key_timeout", 0.0)
+    if key_timeout == 0.0:
+        key_timeout = None
+
+    pub_thread = PublishThread(repeat)
+
+    x = 0
+    y = 0
+    z = 0
+    th = 0
+    KPH = 0
+    Deg = 0
+    Brake = 0
+    status = 0
+
+    try:
+        pub_thread.wait_for_subscribers()
+        pub_thread.update(x, y, z, th, speed, turn, KPH, Deg, Brake)
+
+        print(msg)
+        print(vels(speed,turn,KPH))
+#        print(KPH)
+        while(1):
+            key = getKey(key_timeout)
+#            print(key)
+            if key in moveBindings.keys():
+                x = moveBindings[key][0]
+                y = moveBindings[key][1]
+                z = moveBindings[key][2]
+                th = moveBindings[key][3]
+            elif key in speedBindings.keys():
+                speed = speed * speedBindings[key][0]
+                turn = turn * speedBindings[key][1]
+
+                print(vels(speed,turn,KPH))
+                if (status == 14):
+                    print(msg)
+                status = (status + 1) % 15
+            elif key in keyBindings.keys():
+
+                KPH += keyBindings[key][0]
+                Deg += keyBindings[key][1]
+                Brake += keyBindings[key][2]
+                KPH = clip(
+                    KPH, pub_thread.speed_range[0], pub_thread.speed_range[1])
+                Deg = clip(
+                    Deg,
+                    pub_thread.steering_angle_range[0],
+                    pub_thread.steering_angle_range[1])
+                Brake = clip(
+                    Brake, pub_thread.Brake_range[0], pub_thread.Brake_range[1])
+
             else:
-                continue
-        self.finalize()
+                # Skip updating cmd_vel if key timeout and robot already
+                # stopped.
+                if key == '' and x == 0 and y == 0 and z == 0 and th == 0 and KPH ==0 and Deg == 0 and Brake == 0:
+                    continue
+                x = 0
+                y = 0
+                z = 0
+                th = 0
+                KPH = 0
+                Deg = 0
+                Brake = 0
+            if (key == '\x03' or key == '\x71'):
+                break
 
-    def finalize(self):
-        rospy.loginfo('ERP42 Teleop Key Finished..')
-        self.settings = termios.tcgetattr(sys.stdin)
-        erp42_cmd_msg = CmdControl()
-        erp42_cmd_msg.KPH = self.speed
-        erp42_cmd_msg.Deg = self.steering_angle
-        self.cmd_pub.publish(erp42_cmd_msg)
-        sys.exit()
+            pub_thread.update(x, y, z, th, speed, turn, KPH, Deg, Brake)
 
-if __name__ == '__main__':
-    rospy.init_node('erp42_drive_keyop_node')
-    keyop = ERP42DriveKeyop(sys.argv[1:len(sys.argv)])
+    except Exception as e:
+        print(e)
+
+    finally:
+        pub_thread.stop()
+
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
