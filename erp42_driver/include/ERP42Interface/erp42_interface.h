@@ -18,7 +18,7 @@
 #include <erp42_msgs/FeedBack1.h> // Publish Command
 #include <erp42_msgs/FeedBack2.h> // Subscribe Encoder
 
-#include <math.h>
+#include <cmath>
 
 template<typename N, typename M>
 inline double MIN(const N& a, const M& b)

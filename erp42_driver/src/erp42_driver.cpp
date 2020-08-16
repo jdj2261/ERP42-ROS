@@ -56,29 +56,21 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
   // m/s to KPH
   double linear_vel = msg.linear.x;
   double angular_vel = msg.angular.z;
-
-  if (linear_vel == 0.0 || angular_vel == 0.0)
-  {
-    linear_vel = 0.0;
-    angular_vel = 0.0;
-  }
-
   double radius = linear_vel / angular_vel;
   double steering_angle = atan(erp42_interface_.m_wheel_base / radius);
 
-  if (isnan(radius))
+  if (linear_vel == 0.0 || angular_vel == 0.0)
   {
     radius = 0.0;
     steering_angle = 0.0;
   }
 
-  std::cout << radius << std::endl;
+  std::cout << " Linear Vel : " << linear_vel << " Steer Angle: " << steering_angle <<std::endl;
 
-  m_cmdctrl_msg.KPH = (uint16_t)MPS2KPH(msg.linear.x);
-  m_cmdctrl_msg.Deg = (int16_t)RAD2DEG(steering_angle);
+  m_cmdctrl_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
+  m_cmdctrl_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
   m_pub_cmdcontrol.publish(m_cmdctrl_msg);
-//  ROS_DEBUG("%0.2lf",msg.linear.x);
 
   ROS_DEBUG_STREAM_NAMED("test",
                          "Added values to command. "

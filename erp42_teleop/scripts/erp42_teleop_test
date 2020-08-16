@@ -65,13 +65,30 @@ speedBindings={
 class PublishThread(threading.Thread):
     def __init__(self, rate):
         super(PublishThread, self).__init__()
-        self.publisher = rospy.Publisher('cmd_vel', Twist, queue_size = 1)
+
+        max_speed = 5 # Km/h
+        max_steering_angle = 20
+        max_encoder = 65535
+
+        cmd_vel_topic = '/cmd_vel'
+        cmd_control_topic = '/erp42_can/command'
+        encoder_topic = '/erp42_can/feedback2'
+
+        self.publisher = rospy.Publisher(cmd_vel_topic, Twist, queue_size = 1)
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
         self.th = 0.0
         self.speed = 0.0
         self.turn = 0.0
+
+        self.cmd_pub = rospy.Publisher(cmd_control_topic, CmdControl, queue_size=1)
+        self.encoder_pub = rospy.Publisher(encoder_topic, FeedBack2, queue_size=1)
+        self.linear_speed = 0
+        self.steering_angle = 0
+        self.encoder = 0
+
+
         self.condition = threading.Condition()
         self.done = False
 
