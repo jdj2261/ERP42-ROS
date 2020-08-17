@@ -20,6 +20,9 @@
 
 #include <cmath>
 
+static const int8_t MAX_KPH = 5;
+static const int8_t MAX_DEGREE = 20;
+
 template<typename N, typename M>
 inline double MIN(const N& a, const M& b)
 {

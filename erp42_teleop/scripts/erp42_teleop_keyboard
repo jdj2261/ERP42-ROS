@@ -19,46 +19,36 @@ Reading from the keyboard  and Publishing to Twist!
 ---------------------------
 Moving around:
    u    i    o
-   j    k    l
-   m    ,    .
-For Holonomic mode (strafing), hold down the shift key:
+        k
+Reading from the keyboard  and Publishing to ERP42_Command!
 ---------------------------
-   U    I    O
-   J    K    L
-   M    <    >
-t : up (+z)
-b : down (-z)
+Direct Command(Number Key):
+        8
+   4    5    6
+        2
 anything else : stop
-q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
-CTRL-C to quit
+8/5   : increase only KPH by 1 (MAX 5)
+4/6 : increase/decrease only Degree by 2 (MAX 20)
+2   : increase only Brake by 2 (MAX 100)
+speed = rospy.get_param("~speed", 0.5)
+turn = rospy.get_param("~turn", 1.0)
+repeat = rospy.get_param("~repeat_rate", 0.0)
+direct = rospy.get_param("~direct", False)
+CTRL-C or q to quit
 """
 
 moveBindings = {
         'i':(1,0,0,0),
         'o':(1,0,0,-1),
-        'j':(0,0,0,1),
-        'l':(0,0,0,-1),
         'u':(1,0,0,1),
-        ',':(-1,0,0,0),
-        '.':(-1,0,0,1),
-        'm':(-1,0,0,-1),
-        'O':(1,-1,0,0),
+        'O':(1,0,0,-1),
         'I':(1,0,0,0),
-        'J':(0,1,0,0),
-        'L':(0,-1,0,0),
-        'U':(1,1,0,0),
-        '<':(-1,0,0,0),
-        '>':(-1,-1,0,0),
-        'M':(-1,1,0,0),
-        't':(0,0,1,0),
-        'b':(0,0,-1,0),
+        'U':(1,0,0,1)
     }
 
 speedBindings={
-        'q':(1.1,1.1),
-        'z':(.9,.9),
         'w':(1.1,1),
         'x':(.9,1),
         'e':(1,1.1),
@@ -73,9 +63,6 @@ keyBindings={
         '2' : ( 0.0 , 0.0, 1.0)
     }
 
-
-
-
 class PublishThread(threading.Thread):
     def __init__(self, rate):
         super(PublishThread, self).__init__()
@@ -86,6 +73,7 @@ class PublishThread(threading.Thread):
 
         cmd_vel_topic = '/cmd_vel'
         cmd_control_topic = '/erp42_can/command'
+        self.isDirect = rospy.get_param("~direct", False)
 
         self.speed_range = [0, float(max_speed)]
         self.steering_angle_range = [-float(max_steering_angle),float(max_steering_angle)]
@@ -174,9 +162,12 @@ class PublishThread(threading.Thread):
 
             self.condition.release()
 
-            # Publish.
             self.publisher.publish(twist)
-            self.cmd_pub.publish(erp42_cmd_msg)
+            if self.isDirect :
+                self.cmd_pub.publish(erp42_cmd_msg)
+            # Publish.
+
+
 
         # Publish stop message when thread exits.
         twist.linear.x = 0
@@ -190,7 +181,9 @@ class PublishThread(threading.Thread):
         erp42_cmd_msg.brake = 0
 
         self.publisher.publish(twist)
-        self.cmd_pub.publish(erp42_cmd_msg)
+
+        if self.isDirect :
+            self.cmd_pub.publish(erp42_cmd_msg)
 
 def getKey(key_timeout):
     tty.setraw(sys.stdin.fileno())
@@ -200,17 +193,21 @@ def getKey(key_timeout):
     return key
 
 
-def vels(speed, turn, KPH):
-    return "currently:\tspeed %s\tturn %s %s" % (speed,turn,KPH)
+def twist_vels(speed, turn):
+    return "currently:\tspeed %s\tturn %s" % (speed,turn)
+
+def erp42_vels(KPH, Deg, Brake):
+    return "currently:\tKPH %s\tDeg %s\tBrake %s" % (KPH,Deg,Brake)
 
 if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
 
     rospy.init_node('teleop_twist_keyboard')
 
+
     speed = rospy.get_param("~speed", 0.5)
     turn = rospy.get_param("~turn", 1.0)
-    repeat = rospy.get_param("~repeat_rate", 50.0)
+    repeat = rospy.get_param("~repeat_rate", 0.0)
     key_timeout = rospy.get_param("~key_timeout", 0.0)
     if key_timeout == 0.0:
         key_timeout = None
@@ -227,15 +224,14 @@ if __name__=="__main__":
     status = 0
 
     try:
-        pub_thread.wait_for_subscribers()
+#        pub_thread.wait_for_subscribers()
         pub_thread.update(x, y, z, th, speed, turn, KPH, Deg, Brake)
 
         print(msg)
-        print(vels(speed,turn,KPH))
-#        print(KPH)
+        print(twist_vels(speed,turn))
+        print(erp42_vels(KPH, Deg, Brake))
         while(1):
             key = getKey(key_timeout)
-#            print(key)
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
                 y = moveBindings[key][1]
@@ -245,10 +241,7 @@ if __name__=="__main__":
                 speed = speed * speedBindings[key][0]
                 turn = turn * speedBindings[key][1]
 
-                print(vels(speed,turn,KPH))
-                if (status == 14):
-                    print(msg)
-                status = (status + 1) % 15
+                print(twist_vels(speed,turn))
             elif key in keyBindings.keys():
 
                 KPH += keyBindings[key][0]
@@ -262,7 +255,7 @@ if __name__=="__main__":
                     pub_thread.steering_angle_range[1])
                 Brake = clip(
                     Brake, pub_thread.Brake_range[0], pub_thread.Brake_range[1])
-
+                print(erp42_vels(KPH, Deg, Brake))
             else:
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
@@ -275,6 +268,12 @@ if __name__=="__main__":
                 KPH = 0
                 Deg = 0
                 Brake = 0
+                print(erp42_vels(KPH, Deg, Brake))
+
+            if (status == 14):
+                print(msg)
+            status = (status + 1) % 15
+
             if (key == '\x03' or key == '\x71'):
                 break
 
@@ -285,5 +284,6 @@ if __name__=="__main__":
 
     finally:
         pub_thread.stop()
+        pub_thread.direct = False
 
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

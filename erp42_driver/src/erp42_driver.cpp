@@ -70,6 +70,10 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
   m_cmdctrl_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
   m_cmdctrl_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
+  m_cmdctrl_msg.KPH = static_cast<uint16_t>(MIN(MAX_KPH, m_cmdctrl_msg.KPH));
+  m_cmdctrl_msg.Deg = static_cast<int16_t>(MIN(MAX_DEGREE,m_cmdctrl_msg.Deg));
+  m_cmdctrl_msg.Deg = static_cast<int16_t>(MAX(-MAX_DEGREE,m_cmdctrl_msg.Deg));
+
   m_pub_cmdcontrol.publish(m_cmdctrl_msg);
 
   ROS_DEBUG_STREAM_NAMED("test",
