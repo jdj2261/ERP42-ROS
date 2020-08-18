@@ -88,15 +88,15 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "can_transmitter");
 
-  ERP42Transmitter erp_control;
+  ERP42Transmitter* erp_control = new ERP42Transmitter;
 
   ros::Rate loop(50); // 50Hz is 0.02s
 
-  if (erp_control.is_enable_can)
+  if (erp_control->is_enable_can)
   {
     while(ros::ok())
     {
-      bool isConnect = erp_control.Connect();
+      bool isConnect = erp_control->Connect();
       if (isConnect)
       {
         ROS_INFO(" Success Connection! ");
@@ -110,9 +110,11 @@ int main(int argc, char* argv[])
   while(ros::ok())
   {
     ros::spinOnce();
-    erp_control.Write();
+    erp_control->Write();
     loop.sleep();
   }
+
+  delete erp_control;
 
   return 0;
 }

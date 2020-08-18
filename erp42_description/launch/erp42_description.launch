@@ -21,12 +21,12 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="namespace" default="ackermann_vehicle"/>
+  <arg name="namespace" default="erp42_description"/>
 
   <group ns="$(arg namespace)">
     <!-- robot_description is used by nodes that publish to joint_states. -->
     <param name="robot_description"
-           command="$(find xacro)/xacro.py --inorder $(find erp42_description)/urdf/em_3905.urdf.xacro"/>
+           command="$(find xacro)/xacro.py --inorder $(find erp42_description)/urdf/ums_erp42.urdf.xacro"/>
 
     <!-- Read joint positions from joint_states, then publish the vehicle's
          state to tf. -->

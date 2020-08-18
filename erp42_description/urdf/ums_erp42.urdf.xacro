@@ -36,7 +36,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<robot name="em_3905" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="erp42" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- Degree-to-radian conversions -->
   <xacro:property name="degrees_45" value="0.785398163"/>
   <xacro:property name="degrees_90" value="1.57079633"/>
@@ -272,7 +272,7 @@ limitations under the License.
     <link name="${lr_prefix}_${fr_prefix}_wheel">
       <visual>
         <origin xyz="0
-                     ${lr_reflect * (axle_length - (tire_width / 
+                     ${lr_reflect * (axle_length - (tire_width /
                      2 - hex_hub_depth))}
                      0"/>
         <geometry>
@@ -283,7 +283,7 @@ limitations under the License.
 
       <collision>
         <origin xyz="0
-                     ${lr_reflect * (axle_length - (tire_width / 
+                     ${lr_reflect * (axle_length - (tire_width /
                      2 - hex_hub_depth))}
                      0"/>
         <geometry>

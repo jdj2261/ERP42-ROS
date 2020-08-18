@@ -7,7 +7,7 @@ project(erp42_gazebo)
 find_package(catkin REQUIRED)
 
 catkin_package()
-catkin_install_python(PROGRAMS scripts/ackermann_controller
+catkin_install_python(PROGRAMS scripts/erp42_controller
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 

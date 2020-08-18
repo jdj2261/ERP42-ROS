@@ -100,13 +100,13 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "can_receiver");
 
-  ERP42Receiver erp_receiver;
+  ERP42Receiver* erp_receiver = new ERP42Receiver;
 
   ros::Rate loop(50);
 
   while(ros::ok())
   {
-    bool isConnect = erp_receiver.Connect();
+    bool isConnect = erp_receiver->Connect();
     if (isConnect)
     {
       ROS_INFO(" Success Connection! ");
@@ -119,8 +119,9 @@ int main(int argc, char* argv[])
   while(ros::ok())
   {
     ros::spinOnce();
-    erp_receiver.Read();
+    erp_receiver->Read();
   }
 
+  delete erp_receiver;
   return 0;
 }

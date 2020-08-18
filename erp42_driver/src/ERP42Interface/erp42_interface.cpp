@@ -66,14 +66,14 @@ void ERP42Interface::SetParams(double wheel_radius, double wheel_base, double wh
 
 }
 
-void ERP42Interface::EncoderCallback(const erp42_msgs::FeedBack2 &msg)
+void ERP42Interface::EncoderCallback(const erp42_msgs::FeedBack2::Ptr &msg)
 {
-  m_encoder = msg.encoder;
+  m_encoder = msg->encoder;
 }
 
-void ERP42Interface::SteerCallback(const erp42_msgs::CmdControl &msg)
+void ERP42Interface::SteerCallback(const erp42_msgs::CmdControl::Ptr &msg)
 {
-  m_steer_angle = DEG2RAD(msg.Deg);
+  m_steer_angle = DEG2RAD(msg->Deg);
 }
 
 // *****************************************************************************

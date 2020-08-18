@@ -51,11 +51,11 @@ void ERP42Driver::Init_node()
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
 
-void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
+void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
 {
   // m/s to KPH
-  double linear_vel = msg.linear.x;
-  double angular_vel = msg.angular.z;
+  double linear_vel = msg->linear.x;
+  double angular_vel = msg->angular.z;
   double radius = linear_vel / angular_vel;
   double steering_angle = atan(erp42_interface_.m_wheel_base / radius);
 
@@ -70,9 +70,9 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist &msg)
   m_cmdctrl_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
   m_cmdctrl_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
-  m_cmdctrl_msg.KPH = static_cast<uint16_t>(MIN(MAX_KPH, m_cmdctrl_msg.KPH));
-  m_cmdctrl_msg.Deg = static_cast<int16_t>(MIN(MAX_DEGREE,m_cmdctrl_msg.Deg));
-  m_cmdctrl_msg.Deg = static_cast<int16_t>(MAX(-MAX_DEGREE,m_cmdctrl_msg.Deg));
+  m_cmdctrl_msg.KPH = MIN(MAX_KPH, m_cmdctrl_msg.KPH);
+  m_cmdctrl_msg.Deg = MIN(MAX_DEGREE,m_cmdctrl_msg.Deg);
+  m_cmdctrl_msg.Deg = MAX(-MAX_DEGREE,m_cmdctrl_msg.Deg);
 
   m_pub_cmdcontrol.publish(m_cmdctrl_msg);
 

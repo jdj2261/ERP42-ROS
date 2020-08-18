@@ -116,8 +116,8 @@ protected:
   void integrateRungeKutta2(double linear, double angular);
 
   // callback
-  void EncoderCallback(const erp42_msgs::FeedBack2 &msg);
-  void SteerCallback(const erp42_msgs::CmdControl &msg);
+  void EncoderCallback(const erp42_msgs::FeedBack2::Ptr &msg);
+  void SteerCallback(const erp42_msgs::CmdControl::Ptr &msg);
 
   // member variable
   int32_t m_encoder;

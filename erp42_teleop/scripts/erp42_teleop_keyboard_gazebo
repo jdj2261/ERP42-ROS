@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
 '''
-ackermann_drive_keyop.py:
+erp42_teleop_keybaord_gazebo.py:
     A ros keyboard teleoperation script for ackermann steering based robots
 '''
 
-__author__ = 'George Kouros'
-__license__ = 'GPLv3'
-__maintainer__ = 'George Kouros'
-__email__ = 'gkourosg@yahoo.gr'
+__author__ = 'Jin DaeJong'
+__license__ = 'Unmanned Solution'
+__maintainer__ = 'DJ JIN'
+__email__ = 'djjin@unmansol.com'
 
 import roslib
 import rospy

@@ -38,7 +38,7 @@ public:
   void Update(ros::Time current_time);
 
   // Callback (ROS)
-  void CmdVelCallback(const geometry_msgs::Twist &msg);
+  void CmdVelCallback(const geometry_msgs::Twist::Ptr &msg);
 ;
 
 private:
