@@ -48,7 +48,7 @@ public:
   void Write();
 
   // Callback (ROS)
-  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg);
+  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
 
   bool is_enable_can;
 

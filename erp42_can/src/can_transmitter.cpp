@@ -75,12 +75,12 @@ bool ERP42Transmitter::Connect()
   else return true;
 }
 
-void ERP42Transmitter::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
+void ERP42Transmitter::CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg)
 {
-  m_pc2erp.MODE = msg.MorA + msg.EStop + msg.Gear;
-  m_pc2erp.speed._speed = msg.KPH * SPEED_FACTOR;
-  m_pc2erp.steer._steer = msg.Deg * STEER_FACTOR;
-  m_pc2erp.brake = msg.brake;
+  m_pc2erp.MODE = msg->MorA + msg->EStop + msg->Gear;
+  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
+  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+  m_pc2erp.brake = msg->brake;
 }
 
 

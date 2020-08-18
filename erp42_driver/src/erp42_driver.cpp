@@ -23,7 +23,7 @@ void ERP42Driver::Init_param()
      ros :: console :: notifyLoggerLevelsChanged ();
   }
 
-  // initialize [m]
+  // Initialize [m]
   double wheel_radius {0.265};
   double wheel_base {1.040};
   double wheel_tread {0.985};

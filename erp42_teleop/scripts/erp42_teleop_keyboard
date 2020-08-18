@@ -64,14 +64,24 @@ keyBindings={
     }
 
 class PublishThread(threading.Thread):
-    def __init__(self, rate):
+    def __init__(self, rate, cmd_topic):
         super(PublishThread, self).__init__()
 
         max_speed = 5 # Km/h
         max_steering_angle = 20
         max_Brake = 100
 
-        cmd_vel_topic = '/cmd_vel'
+        if rate != 0.0:
+            self.timeout = 1.0 / rate
+        else:
+            self.timeout = None
+                
+        if len(cmd_topic) != 0 :
+            self.cmd_vel_topic = cmd_topic
+        else:
+            self.cmd_vel_topic = "/cmd_vel"
+
+        # self.cmd_vel_topic = '/cmd_vel'
         cmd_control_topic = '/erp42_can/command'
         self.isDirect = rospy.get_param("~direct", False)
 
@@ -84,7 +94,7 @@ class PublishThread(threading.Thread):
                      keyBindings[key][1] * float(max_steering_angle) / 10,
                      keyBindings[key][2] * int(max_Brake) / 50)
 
-        self.publisher = rospy.Publisher(cmd_vel_topic, Twist, queue_size = 1)
+        self.publisher = rospy.Publisher(self.cmd_vel_topic, Twist, queue_size = 1)
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
@@ -102,10 +112,8 @@ class PublishThread(threading.Thread):
 
         # Set timeout to None if rate is 0 (causes new_message to wait forever
         # for new data to publish)
-        if rate != 0.0:
-            self.timeout = 1.0 / rate
-        else:
-            self.timeout = None
+
+
 
         self.start()
 
@@ -208,11 +216,12 @@ if __name__=="__main__":
     speed = rospy.get_param("~speed", 0.5)
     turn = rospy.get_param("~turn", 1.0)
     repeat = rospy.get_param("~repeat_rate", 0.0)
+    cmd_topic = rospy.get_param("~cmd_topic","/cmd_vel")
     key_timeout = rospy.get_param("~key_timeout", 0.0)
     if key_timeout == 0.0:
         key_timeout = None
 
-    pub_thread = PublishThread(repeat)
+    pub_thread = PublishThread(repeat, cmd_topic)
 
     x = 0
     y = 0
