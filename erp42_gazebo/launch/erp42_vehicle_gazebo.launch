@@ -37,9 +37,13 @@ limitations under the License.
 
 <launch>
   <arg name="namespace" default="/"/>
-  <arg name="world_name" default="worlds/empty.world"/>
+  <arg name="world_name" default="$(find erp42_gazebo)/worlds/clearpath_playpen.world"/>
   <arg name="cmd_timeout" default="0.5"/>
   <arg name="gui" default="true"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="paused" default="false"/>
 
   <!-- Vehicle pose -->
   <arg name="x" default="0.0"/>
@@ -57,7 +61,11 @@ limitations under the License.
     <!-- Create the world. -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" value="$(arg world_name)"/>
-      <arg name="gui" value="$(arg gui)"/>
+      <arg name="debug" value="$(arg debug)" />
+      <arg name="gui" value="$(arg gui)" />
+      <arg name="paused" value="$(arg paused)"/>
+      <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+      <arg name="headless" value="$(arg headless)"/>
     </include>
 
     <!-- Spawn the vehicle. -->
