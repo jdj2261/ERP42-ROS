@@ -36,7 +36,7 @@ limitations under the License.
 -->
 
 <launch>
-  <arg name="namespace" default="/"/>
+  <arg name="namespace" default="erp42_vehicle"/>
   <arg name="world_name" default="$(find erp42_vehicle_gazebo)/worlds/clearpath_playpen.world"/>
   <arg name="cmd_timeout" default="0.5"/>
   <arg name="gui" default="true"/>
