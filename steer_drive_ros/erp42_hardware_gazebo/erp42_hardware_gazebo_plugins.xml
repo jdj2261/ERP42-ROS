@@ -1,0 +1,11 @@
+<library path="lib/liberp42_hardware_gazebo">
+
+  <class
+    name="erp42_hardware_gazebo/ERP42HardwareGazebo"
+    type="erp42_hardware_gazebo::ERP42HardwareGazebo"
+    base_class_type="gazebo_ros_control::RobotHWSim">
+    <description>
+      ERP42 vehicle simulation interface.
+    </description>
+  </class>
+</library>

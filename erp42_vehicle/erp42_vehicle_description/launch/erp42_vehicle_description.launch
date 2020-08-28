@@ -1,0 +1,7 @@
+<!-- Load the robot description to the ROS parameter server.
+-->
+<launch>
+    <arg name="model" default="$(find erp42_vehicle_description)/urdf/erp42_vehicle.urdf.xacro"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+</launch>

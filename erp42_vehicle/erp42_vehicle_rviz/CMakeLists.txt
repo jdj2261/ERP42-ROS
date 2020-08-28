@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(erp42_vehicle_gazebo)
-
-find_package(catkin REQUIRED roslaunch)
+project(erp42_vehicle_rviz)
+find_package(catkin REQUIRED COMPONENTS roslaunch)
 
 catkin_package()
 
-install(DIRECTORY launch
+install(
+  DIRECTORY launch rviz
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 

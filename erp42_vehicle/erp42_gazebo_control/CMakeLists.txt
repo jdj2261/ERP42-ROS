@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(erp42_vehicle_description)
+project(erp42_gazebo_control)
 
-find_package(catkin REQUIRED COMPONENTS
-    roslaunch
-    urdf
-    xacro
-)
+find_package(catkin REQUIRED COMPONENTS roslaunch)
 
 catkin_package()
 
-install(DIRECTORY launch urdf
+install(DIRECTORY config launch
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
