@@ -89,7 +89,7 @@ class PublishThread(threading.Thread):
 
         # self.cmd_vel_topic = '/cmd_vel'
         cmd_control_topic = '/erp42_can/command'
-        self.isDirect = rospy.get_param("~direct", False)
+        self.isDirect = rospy.get_param("~direct", True)
 
         self.speed_range = [0, float(max_speed)]
         self.steering_angle_range = [-float(max_steering_angle),float(max_steering_angle)]
@@ -220,8 +220,8 @@ if __name__=="__main__":
 
 
     speed = rospy.get_param("~speed", 0.5)
-    turn = rospy.get_param("~turn", 1.0)
-    repeat = rospy.get_param("~repeat_rate", 0.0)
+    turn = rospy.get_param("~turn", 0.5)
+    repeat = rospy.get_param("~repeat_rate", 50.0)
     cmd_topic = rospy.get_param("~cmd_topic","/cmd_vel")
     key_timeout = rospy.get_param("~key_timeout", 0.0)
     if key_timeout == 0.0:

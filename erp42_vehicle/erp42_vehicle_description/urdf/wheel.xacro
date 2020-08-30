@@ -126,7 +126,7 @@
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
         </geometry>
-        <material name="red" />
+        <material name="black" />
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>

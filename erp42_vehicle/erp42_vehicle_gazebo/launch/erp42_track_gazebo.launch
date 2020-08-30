@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="model" default="$(find erp42_vehicle_description)/urdf/erp42_vehicle.urdf.xacro"/>
+  <arg name="namespace" default="/"/>
+  <arg name="world_name" value="$(find erp42_vehicle_gazebo)/worlds/whiteroad.world"/>
+  <arg name="cmd_timeout" default="0.5"/>
+
+  <!-- Vehicle pose -->
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="-19.95"/>
+  <arg name="z" default="0.1"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="3.14"/>
+
+  <remap from="/ackermann_steering_controller/cmd_vel" to="/cmd_vel" />
+  <remap from="/ackermann_steering_controller/odom" to="/odom" />
+
+  <group ns="$(arg namespace)">
+    <!-- Create the world. -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(arg world_name)"/>
+
+    </include>
+
+    <!-- Load the robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
+
+    <!-- Load ros_controllers configuration parameters -->
+    <rosparam file="$(find erp42_gazebo_control)/config/ctrl_ackermann_steering_controller.yaml" command="load" ns="$(arg namespace)" />
+    <rosparam file="$(find erp42_gazebo_control)/config/ctrl_gains.yaml" command="load" ns="$(arg namespace)" />
+    <rosparam file="$(find erp42_gazebo_control)/config/ctrl_joint_state_publisher.yaml" command="load" ns="$(arg namespace)" />
+    <rosparam file="$(find erp42_gazebo_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" command="load" ns="$(arg namespace)" />
+
+<!-- Spawn the controllers -->
+    <node pkg="controller_manager" type="spawner" name="controller_spawner" ns="$(arg namespace)"
+        args="joint_state_publisher ackermann_steering_controller"
+        respawn="false">
+    </node>
+
+
+
+    <!-- Launch  the robot state publisher -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <param name="publish_frequency" value="50.0"/>
+    </node>
+
+
+    <!-- Spawn the vehicle. -->
+    <node name="spawn_vehicle" pkg="gazebo_ros" type="spawn_model"
+          args="-urdf -param robot_description -model erp42_vehicle
+                -gazebo_namespace /$(arg namespace)/gazebo
+                -x $(arg x) -y $(arg y) -z $(arg z)
+                -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+    <!-- Load the joint controllers. One of these publishes the joint states
+         to joint_states. -->
+
+  </group>
+</launch>

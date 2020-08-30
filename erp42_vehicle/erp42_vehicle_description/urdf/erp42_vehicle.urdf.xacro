@@ -160,7 +160,7 @@
             <!-- VLP-16 -->
   
   <VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="50" samples="1024" gpu="false" lasers="16" max_range="100">
-    <origin xyz="0 0 0.1" rpy="0 0 0" />
+    <origin xyz="0 0 0.3" rpy="0 0 0" />
   </VLP-16>
 
     <!-- IMU link -->
@@ -177,7 +177,7 @@
      <!-- Camera -->
   <joint name="camera_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin xyz="0 0 0.3" rpy="0 0.1 0"/>
+    <origin xyz="0.20 0 0.5" rpy="0 -0.1 0"/>
     <parent link="base_link"/>
     <child link="camera_link"/>
   </joint>
@@ -185,12 +185,12 @@
   <!-- Camera -->
   <xacro:property name="camera_size" value="0.05" /> <!-- Size of square 'camera' box -->
   <link name="camera_link">
-  <collision>
+<!--  <collision>
       <geometry>
           <box size=".1 .3 .1"/>
       </geometry>
       <contact_coefficients mu="0" kp="1000.0" kd="1.0"/>
-  </collision>
+  </collision>-->
 
     <visual>
         <geometry>
@@ -214,15 +214,15 @@
     <sensor type="depth" name="camera_ir">
       <update_rate>30.0</update_rate>
       <camera name="head">
-        <horizontal_fov>1.5</horizontal_fov>
+        <horizontal_fov>1.047</horizontal_fov>
         <image>
           <width>600</width>
           <height>480</height>
           <format>R8G8B8</format>
         </image>
         <clip>
-          <near>0.02</near>
-          <far>300</far>
+          <near>0.1</near>
+          <far>100</far>
         </clip>
         <noise>
           <type>gaussian</type>
@@ -236,7 +236,7 @@
       </camera>
       <plugin name="camera_controller" filename="libgazebo_ros_openni_kinect.so">
         <alwaysOn>true</alwaysOn>
-        <updateRate>0.0</updateRate>
+        <updateRate>10.0</updateRate>
         <cameraName>camera_ir</cameraName>
         <imageTopicName>/camera/color/image_raw</imageTopicName>
         <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
@@ -244,7 +244,7 @@
         <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
         <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
         <frameName>camera_link</frameName>
-        <pointCloudCutoff>0.5</pointCloudCutoff>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
         <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
         <distortionK1>0.0</distortionK1>
         <distortionK2>0.0</distortionK2>
@@ -255,7 +255,7 @@
         <Cx>0</Cx>
         <Cy>0</Cy>
         <focalLength>0</focalLength>
-        <hackBaseline>0</hackBaseline>
+        <hackBaseline>0.07</hackBaseline>
       </plugin>
     </sensor>
   </gazebo>
