@@ -14,7 +14,7 @@
 
 
 #include <ros/ros.h>
-#include <erp42_msgs/FeedBack2.h>
+#include <erp42_msgs/CANFeedBack2.h>
 
 namespace unmansol
 {
@@ -38,7 +38,7 @@ protected:
   ros::NodeHandle m_nh;
 
   ros::Publisher m_pub_test;
-  erp42_msgs::FeedBack2 m_encoder_msg;
+  erp42_msgs::CANFeedBack2 m_encoder_msg;
 
 }; // class ERP42Test
 

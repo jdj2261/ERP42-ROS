@@ -1,7 +1,7 @@
 #include "can_receiver.h"
 #include "can_variables.h"
 
-using namespace unmansol::erp42;
+using namespace unmansol::erp42::can;
 
 ERP42Receiver::ERP42Receiver():
   m_nh("~")
@@ -11,9 +11,10 @@ ERP42Receiver::ERP42Receiver():
 
 void ERP42Receiver::Init_node()
 {
-  m_pub_feedback1 = m_nh.advertise<erp42_msgs::FeedBack1>("/erp42_can/feedback1",1);
-  m_pub_feedback2 = m_nh.advertise<erp42_msgs::FeedBack2>("/erp42_can/feedback2",1);
-  m_pub_test = m_nh.advertise<erp42_msgs::test>("/erp42_can/test",1);
+  this->ns_ = ros::this_node::getNamespace();
+  m_pub_feedback1 = m_nh.advertise<erp42_msgs::CANFeedBack1>(this->ns_ + "/feedback1",1);
+  m_pub_feedback2 = m_nh.advertise<erp42_msgs::CANFeedBack2>(this->ns_ + "/feedback2",1);
+  m_pub_test = m_nh.advertise<erp42_msgs::CANtest>(this->ns_ + "/test",1);
 }
 
 void ERP42Receiver::Read()
@@ -43,8 +44,8 @@ void ERP42Receiver::Update()
     m_feedback1_msg.MorA  = m_RMessage.DATA[0] & 0x01;
     m_feedback1_msg.EStop = m_RMessage.DATA[0] & 0x02;
     m_feedback1_msg.Gear  = m_RMessage.DATA[0] & 0x0c;
-    m_feedback1_msg.speed = ((m_RMessage.DATA[2] & 0xff) << 8  | (m_RMessage.DATA[1] & 0xff))/SPEED_FACTOR;
-    m_feedback1_msg.steer = ((m_RMessage.DATA[4] & 0xff) << 8  | (m_RMessage.DATA[3] & 0xff))/STEER_FACTOR;
+    m_feedback1_msg.speed = ((m_RMessage.DATA[2] << 8 ) & 0xff00  | (m_RMessage.DATA[1] & 0xff))/SPEED_FACTOR;
+    m_feedback1_msg.steer = ((m_RMessage.DATA[4] << 8 ) & 0xff00  | (m_RMessage.DATA[3] & 0xff))/STEER_FACTOR;
     m_feedback1_msg.brake = m_RMessage.DATA[5];
     m_feedback1_msg.alive = m_RMessage.DATA[7];
     m_pub_feedback1.publish(m_feedback1_msg);
@@ -63,7 +64,6 @@ void ERP42Receiver::Update()
     m_feedback2_msg.brake_init_max = m_RMessage.DATA[7];
 
     m_pub_feedback2.publish(m_feedback2_msg);
-
 
     break;
 

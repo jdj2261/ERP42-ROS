@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+        <arg name="namespace" default="/erp42_can"/>
+        <group ns="$(arg namespace)">
+            <node pkg="erp42_can" name="can_receiver_node" type="can_receiver_node" />
+            <node pkg="erp42_can" name="can_transmitter_node" type="can_transmitter_node" output="screen"/>
+        </group>
+</launch>

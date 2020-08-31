@@ -4,7 +4,8 @@
 uint8 MorA
 uint8 EStop
 uint8 Gear
-int16 speed
-int16 steer
-uint8 brake
+float64 speed
+float64 steer
+int16 brake
+int32 encoder
 uint8 alive

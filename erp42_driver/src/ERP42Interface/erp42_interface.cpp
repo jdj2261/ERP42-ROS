@@ -23,11 +23,24 @@ ERP42Interface::ERP42Interface():
 
 void ERP42Interface::Init_node()
 {
+  ns_ = ros::this_node::getNamespace();
   // test
-  m_sub_steer   = m_nh.subscribe("/erp42_can/command",1, &ERP42Interface::SteerCallback, this);
-  // real
-//  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
-  m_sub_encoder = m_nh.subscribe("/erp42_can/feedback2",1,&ERP42Interface::EncoderCallback, this);
+  if (this->ns_ == "/erp42_can")
+  {
+
+    m_sub_steer   = m_nh.subscribe(this->ns_ + "/command",1, &ERP42Interface::SteerCallback, this);
+    // real
+    //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
+    m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback2",1, &ERP42Interface::CANEncoderCallback, this);
+  }
+  else
+  {
+    m_sub_steer   = m_nh.subscribe(this->ns_ + "/command",1, &ERP42Interface::SteerCallback, this);
+    // real
+    //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
+    m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialEncoderCallback, this);
+
+  }
 }
 
 // *****************************************************************************
@@ -66,7 +79,8 @@ void ERP42Interface::SetParams(double wheel_radius, double wheel_base, double wh
 
 }
 
-void ERP42Interface::EncoderCallback(const erp42_msgs::FeedBack2::Ptr &msg)
+
+void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg)
 {
   m_encoder = msg->encoder;
 }
@@ -75,6 +89,13 @@ void ERP42Interface::SteerCallback(const erp42_msgs::CmdControl::Ptr &msg)
 {
   m_steer_angle = DEG2RAD(msg->Deg);
 }
+
+void ERP42Interface::SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr &msg)
+{
+  m_encoder = msg->encoder;
+}
+
+
 
 // *****************************************************************************
 // Calculate ERP42 odometry
@@ -94,20 +115,20 @@ void ERP42Interface::CalculateOdometry(double delta_time)
   m_odom_y += m_delta_pos * sin(m_odom_yaw);
 
 
-//  std::cout << "Delta Pose: " << m_delta_pos << " ";
-//  std::cout << "Linear Vel: " << m_linear_vel<< " ";
-//  std::cout << "Angular Vel: " << m_steer_angle<< " ";
-//  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
-//  std::cout << "Odom X : " << m_odom_x << " ";
-//  std::cout << " Y : " << m_odom_y << " ";
-//  std::cout << " Yaw : " << m_odom_yaw << std::endl;
+  //  std::cout << "Delta Pose: " << m_delta_pos << " ";
+  //  std::cout << "Linear Vel: " << m_linear_vel<< " ";
+  //  std::cout << "Angular Vel: " << m_steer_angle<< " ";
+  //  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
+  //  std::cout << "Odom X : " << m_odom_x << " ";
+  //  std::cout << " Y : " << m_odom_y << " ";
+  //  std::cout << " Yaw : " << m_odom_yaw << std::endl;
 
 
   if (isnan(m_delta_pos)){
-      m_delta_pos = 0.0;
+    m_delta_pos = 0.0;
   }
   if (isnan(m_angular_vel)){
-      m_angular_vel = 0.0;
+    m_angular_vel = 0.0;
   }
 
 }

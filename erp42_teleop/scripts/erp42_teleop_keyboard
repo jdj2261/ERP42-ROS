@@ -88,7 +88,8 @@ class PublishThread(threading.Thread):
             self.cmd_vel_topic = "/cmd_vel"
 
         # self.cmd_vel_topic = '/cmd_vel'
-        cmd_control_topic = '/erp42_can/command'
+        ns = rospy.get_namespace()
+        cmd_control_topic = ns + '/command'
         self.isDirect = rospy.get_param("~direct", True)
 
         self.speed_range = [0, float(max_speed)]
@@ -300,5 +301,4 @@ if __name__=="__main__":
     finally:
         pub_thread.stop()
         pub_thread.direct = False
-
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

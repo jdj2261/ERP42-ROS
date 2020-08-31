@@ -3,10 +3,9 @@
     <name>erp42_vehicle_gazebo</name>
     <version>0.0.0</version>
     <description>The steer_bot_gazebo package</description>
-    <maintainer email="rhys.mainwaring@me.com">Rhys Mainwaring</maintainer>
-    <license>BSD-3-Clause</license>
-    <author email="rhys.mainwaring@me.com">Rhys Mainwaring</author>
-    <buildtool_depend>catkin</buildtool_depend>
+    <maintainer email="djjin@todo.todo">djjin</maintainer>
+    <license>Unmanned Solution</license>
+    <author email="jdj2261@github.com">Daejong Jin</author><buildtool_depend>catkin</buildtool_depend>
     <exec_depend>ackermann_steering_controller</exec_depend>
     <exec_depend>controller_manager</exec_depend>
     <exec_depend>gazebo_ros</exec_depend>
@@ -21,11 +20,6 @@
     <exec_depend>xacro</exec_depend>
 
     <export>
-      <architecture_independent/>
-      <rosdoc config="rosdoc.yaml"/>
-      <!-- gazebo_ros_paths_plugin automatically adds these to
-           GAZEBO_PLUGIN_PATH and GAZEBO_MODEL_PATH when you do this export inside
-          the package.xml file. You can than use URIs of type model://my_package/stuff. -->
       <gazebo_ros gazebo_model_path="${prefix}/.." />
     </export>
 </package>

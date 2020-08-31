@@ -9,9 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
    FILES
    CmdControl.msg
-   FeedBack1.msg
-   FeedBack2.msg
-   test.msg
+   CANFeedBack1.msg
+   CANFeedBack2.msg
+   CANtest.msg
+   SerialFeedBack.msg
 )
 
 generate_messages(

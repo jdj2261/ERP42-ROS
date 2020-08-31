@@ -15,8 +15,11 @@
 #include <ros/ros.h>
 
 #include <erp42_msgs/CmdControl.h>
-#include <erp42_msgs/FeedBack1.h> // Publish Command
-#include <erp42_msgs/FeedBack2.h> // Subscribe Encoder
+#include <erp42_msgs/CANFeedBack1.h> // Publish Command
+#include <erp42_msgs/CANFeedBack2.h> // Subscribe Encoder
+
+#include <erp42_msgs/SerialFeedBack.h> // Subscribe Encoder
+
 
 #include <cmath>
 
@@ -96,11 +99,13 @@ public:
   double m_linear_vel;
   double m_angular_vel;
 
-  double m_wheel_base = 1.040;
+  double m_wheel_base;
   double m_steer_angle;
   double m_status;
 
   int32_t m_delta_encoder;
+
+  std::string ns_;
 
 protected:
   ros::NodeHandle m_nh;
@@ -109,15 +114,16 @@ protected:
   ros::Subscriber m_sub_steer;
   ros::Subscriber m_sub_encoder;
 
-  erp42_msgs::FeedBack2 m_feedback2_msg;
+  erp42_msgs::CANFeedBack2 m_feedback2_msg;
 
   void Init_node();
   void IntegrateExact(double linear, double angular);
   void integrateRungeKutta2(double linear, double angular);
 
   // callback
-  void EncoderCallback(const erp42_msgs::FeedBack2::Ptr &msg);
+  void CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg);
   void SteerCallback(const erp42_msgs::CmdControl::Ptr &msg);
+  void SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr &msg);
 
   // member variable
   int32_t m_encoder;

@@ -1,8 +1,9 @@
 #include "can_transmitter.h"
 #include "can_variables.h"
-using namespace unmansol::erp42;
+using namespace unmansol::erp42::can;
 
 ERP42Transmitter::ERP42Transmitter():
+  is_enable_can(true),
   m_nh("~"),
   m_AlvCnt(0)
 {
@@ -25,7 +26,11 @@ void ERP42Transmitter::Init_data()
 
 void ERP42Transmitter::Init_node()
 {
-  m_sub_command = m_nh.subscribe("/erp42_can/command", 1, &ERP42Transmitter::CmdCtrlMsgCallback, this);
+  this->ns_ = ros::this_node::getNamespace();
+  m_nh.param("enable_can",enable_can,enable_can);
+  is_enable_can = enable_can;
+  std::cout << is_enable_can << std::endl;
+  m_sub_command = m_nh.subscribe(this->ns_ + "/command", 1, &ERP42Transmitter::CmdCtrlMsgCallback, this);
 }
 
 void ERP42Transmitter::Write()
@@ -71,12 +76,12 @@ bool ERP42Transmitter::Connect()
   else return true;
 }
 
-void ERP42Transmitter::CmdCtrlMsgCallback(const erp42_msgs::CmdControl &msg)
+void ERP42Transmitter::CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg)
 {
-  m_pc2erp.MODE = msg.MorA + msg.EStop + msg.Gear;
-  m_pc2erp.speed._speed = msg.KPH * SPEED_FACTOR;
-  m_pc2erp.steer._steer = msg.Deg * STEER_FACTOR;
-  m_pc2erp.brake = msg.brake;
+  m_pc2erp.MODE = msg->MorA + msg->EStop + msg->Gear;
+  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
+  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+  m_pc2erp.brake = msg->brake;
 }
 
 
@@ -84,28 +89,33 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "can_transmitter");
 
-  ERP42Transmitter erp_control;
+  ERP42Transmitter* erp_control = new ERP42Transmitter;
 
   ros::Rate loop(50); // 50Hz is 0.02s
 
-  while(ros::ok())
+  if (erp_control->is_enable_can)
   {
-    bool isConnect = erp_control.Connect();
-    if (isConnect)
+    while(ros::ok())
     {
-      ROS_INFO(" Success Connection! ");
-      break;
+      bool isConnect = erp_control->Connect();
+      if (isConnect)
+      {
+        ROS_INFO(" Success Connection! ");
+        break;
+      }
+      else ROS_ERROR(" Not Connected ");
+      loop.sleep();
     }
-    else ROS_ERROR(" Not Connected ");
-    loop.sleep();
   }
 
   while(ros::ok())
   {
     ros::spinOnce();
-    erp_control.Write();
+    erp_control->Write();
     loop.sleep();
   }
+
+  delete erp_control;
 
   return 0;
 }

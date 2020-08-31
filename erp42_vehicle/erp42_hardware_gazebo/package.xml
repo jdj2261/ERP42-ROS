@@ -4,11 +4,9 @@
   <version>0.1.0</version>
   <description>erp42 hardware for gazebo simulation</description>
 
-  <maintainer email="p595201m@mail.kyutech.jp">Masaru Morita</maintainer>
-
-  <license>BSD</license>
-
-
+  <maintainer email="djjin@todo.todo">djjin</maintainer>
+  <license>Unmanned Solution</license>
+  <author email="jdj2261@github.com">Daejong Jin</author>
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>angles</depend>

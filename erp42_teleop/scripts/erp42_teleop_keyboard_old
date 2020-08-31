@@ -13,7 +13,7 @@ __email__ = 'djjin@unmansol.com'
 
 import rospy
 import roslib
-from erp42_msgs.msg import CmdControl, FeedBack1, FeedBack2
+from erp42_msgs.msg import CANCmdControl, CANFeedBack1, CANFeedBack2
 from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
 import sys, select, termios, tty

@@ -32,6 +32,8 @@ namespace unmansol
 {
 namespace erp42
 {
+namespace can
+{
 class ERP42Transmitter
 {
 
@@ -60,13 +62,14 @@ protected:
 
   ros::NodeHandle m_nh;
   ros::Subscriber m_sub_command;
+  std::string ns_;
 
   erp42_msgs::CmdControl m_cmd_ctrl_msg;
 
   uint8_t m_AlvCnt;
 
 }; // class ERP42Transmitter
-
+} // namespace can
 } // namespace erp42
 } // namespace unmansol
 

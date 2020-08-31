@@ -3,12 +3,9 @@
     <name>erp42_vehicle_rviz</name>
     <version>0.0.0</version>
     <description>The erp42_vehicle_rviz package</description>
-    <maintainer email="rhys.mainwaring@me.com">Rhys Mainwaring</maintainer>
-    <license>BSD-3-Clause</license>
-    <url type="website">https://github.com/srmainwaring/steer_bot</url>
-    <url type="repository">https://github.com/srmainwaring/steer_bot</url>
-    <url type="bugtracker">https://github.com/srmainwaring/steer_bot/issues</url>
-    <author email="rhys.mainwaring@me.com">Rhys Mainwaring</author>
+    <maintainer email="djjin@todo.todo">djjin</maintainer>
+    <license>Unmanned Solution</license>
+    <author email="jdj2261@github.com">Daejong Jin</author><url type="website">https://github.com/srmainwaring/steer_bot</url>
     <buildtool_depend>catkin</buildtool_depend>
     <build_depend>roslaunch</build_depend>
     <exec_depend>joint_state_publisher</exec_depend>

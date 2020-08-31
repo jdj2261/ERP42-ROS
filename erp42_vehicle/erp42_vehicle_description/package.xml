@@ -3,10 +3,9 @@
     <name>erp42_vehicle_description</name>
     <version>0.0.0</version>
     <description>The steer_bot_description package</description>
-    <maintainer email="rhys.mainwaring@me.com">Rhys Mainwaring</maintainer>
-    <license>BSD-3-Clause</license>
-    <author email="rhys.mainwaring@me.com">Rhys Mainwaring</author>
-    <buildtool_depend>catkin</buildtool_depend>
+    <maintainer email="djjin@todo.todo">djjin</maintainer>
+    <license>Unmanned Solution</license>
+    <author email="jdj2261@github.com">Daejong Jin</author>    <buildtool_depend>catkin</buildtool_depend>
     <depend>urdf</depend>
     <depend>xacro</depend>
     <exec_depend>roslaunch</exec_depend>

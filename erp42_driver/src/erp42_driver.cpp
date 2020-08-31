@@ -32,13 +32,13 @@ void ERP42Driver::Init_param()
   double max_steer_angle {28.169};
   double min_steer_angle {-28.169};
 
-  m_nh.param("wheel_radius", wheel_radius, wheel_radius);
-  m_nh.param("wheel_base", wheel_base, wheel_base);
-  m_nh.param("wheel_tread", wheel_tread, wheel_tread);
-  m_nh.param("max_vel", max_vel, max_vel);
-  m_nh.param("min_vel", min_vel, min_vel);
-  m_nh.param("max_steer_angle", max_steer_angle, max_steer_angle);
-  m_nh.param("min_steer_angle", min_steer_angle, min_steer_angle);
+  m_nh.param<double>("wheel_radius", wheel_radius, wheel_radius);
+  m_nh.param<double>("wheel_base", wheel_base, wheel_base);
+  m_nh.param<double>("wheel_tread", wheel_tread, wheel_tread);
+  m_nh.param<double>("max_vel", max_vel, max_vel);
+  m_nh.param<double>("min_vel", min_vel, min_vel);
+  m_nh.param<double>("max_steer_angle", max_steer_angle, max_steer_angle);
+  m_nh.param<double>("min_steer_angle", min_steer_angle, min_steer_angle);
 
   erp42_interface_.SetParams(wheel_radius, wheel_base, wheel_tread,
                              max_vel, min_vel, max_steer_angle, min_steer_angle);
@@ -47,7 +47,7 @@ void ERP42Driver::Init_param()
 void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
-  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>("/erp42_can/command",1);
+  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(erp42_interface_.ns_+"/command",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
 
@@ -71,8 +71,8 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
   m_cmdctrl_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
   m_cmdctrl_msg.KPH = MIN(MAX_KPH, m_cmdctrl_msg.KPH);
-  m_cmdctrl_msg.Deg = MIN(MAX_DEGREE,m_cmdctrl_msg.Deg);
-  m_cmdctrl_msg.Deg = MAX(-MAX_DEGREE,m_cmdctrl_msg.Deg);
+  m_cmdctrl_msg.Deg = MIN(MAX_DEGREE, m_cmdctrl_msg.Deg);
+  m_cmdctrl_msg.Deg = MAX(-MAX_DEGREE, m_cmdctrl_msg.Deg);
 
   m_pub_cmdcontrol.publish(m_cmdctrl_msg);
 

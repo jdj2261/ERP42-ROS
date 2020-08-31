@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<launch>
+        <arg name="namespace" default="/erp42_serial"/>
+        <group ns="$(arg namespace)">
+            <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen"/>
+        </group>
+</launch>
+

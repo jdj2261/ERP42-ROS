@@ -11,7 +11,7 @@ ERP42Test::ERP42Test():
 
 void ERP42Test::Init_node()
 {
-  m_pub_test = m_nh.advertise<erp42_msgs::FeedBack2>("/erp42_can/feedback2",1);
+  m_pub_test = m_nh.advertise<erp42_msgs::CANFeedBack2>("/erp42_can/feedback2",1);
 }
 
 
