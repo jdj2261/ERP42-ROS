@@ -3,7 +3,10 @@
 <launch>
         <arg name="namespace" default="/erp42_serial"/>
         <group ns="$(arg namespace)">
-            <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen"/>
+            <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen">
+                <param name="serial_port" value="/dev/ttyUSB0"/>
+                <param name="serial_baudrate" value="115200"/>
+            </node>
         </group>
 </launch>
 

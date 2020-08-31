@@ -222,7 +222,7 @@ if __name__=="__main__":
 
     speed = rospy.get_param("~speed", 0.5)
     turn = rospy.get_param("~turn", 0.5)
-    repeat = rospy.get_param("~repeat_rate", 50.0)
+    repeat = rospy.get_param("~repeat_rate", 0.0)
     cmd_topic = rospy.get_param("~cmd_topic","/cmd_vel")
     key_timeout = rospy.get_param("~key_timeout", 0.0)
     if key_timeout == 0.0:

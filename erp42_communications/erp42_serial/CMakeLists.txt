@@ -33,10 +33,9 @@ include_directories(
 )
 
 add_executable(erp42_serial_node
-    src/serial_node.cpp
-    src/serial_receiver.cpp
-    src/serial_transmitter.cpp
-    src/SerialInterface/serial_interface.cpp
+    src/erp42_serial.cpp
+    src/erp42_serial_node.cpp
+    src/SerialPort/serial_port.cpp
     )
 add_dependencies(erp42_serial_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(erp42_serial_node ${catkin_LIBRARIES})
