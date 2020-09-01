@@ -25,13 +25,16 @@ Reading from the keyboard  and Publishing to ERP42_Command!
 Direct Command(Number Key):
         8
    4    5    6
-        2
+   1    2    3
 anything else : stop
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
-8/5   : increase only KPH by 1 (MAX 5)
+8   : increase only KPH by 1 (MAX 5)
 4/6 : increase/decrease only Degree by 2 (MAX 20)
-2   : increase only Brake by 2 (MAX 100)
+5   : increase only Brake by 2 (MAX 100)
+[ / ] : Manual / Auto
+space : EStop On / OFF
+1/2/3 : Gear Forward/Netural/Reverse
 speed = rospy.get_param("~speed", 0.5)
 turn = rospy.get_param("~turn", 1.0)
 repeat = rospy.get_param("~repeat_rate", 0.0)
@@ -63,10 +66,18 @@ speedBindings={
 
 keyBindings={
         '8' : ( 1.0 , 0.0, 0),
-        '5' : ( -1.0 , 0.0, 0),
+        '5' : ( 0.0 , 0.0, 1.0),
         '4' : ( 0.0 , 1.0, 0),
         '6' : ( 0.0 , -1.0, 0),
-        '2' : ( 0.0 , 0.0, 1.0)
+    }
+
+ModeBindings={
+        '[' : 0x00,
+        ']' : 0x01,
+        ' ': (0x00, 0x01),
+        '1' : 0x00,
+        '2' : 0x01,
+        '3' : 0x02
     }
 
 class PublishThread(threading.Thread):
@@ -89,7 +100,7 @@ class PublishThread(threading.Thread):
 
         # self.cmd_vel_topic = '/cmd_vel'
         ns = rospy.get_namespace()
-        cmd_control_topic = ns + '/command'
+        cmd_control_topic = ns + 'command'
         self.isDirect = rospy.get_param("~direct", True)
 
         self.speed_range = [0, float(max_speed)]
@@ -102,17 +113,20 @@ class PublishThread(threading.Thread):
                      keyBindings[key][2] * int(max_Brake) / 50)
 
         self.publisher = rospy.Publisher(self.cmd_vel_topic, Twist, queue_size = 1)
-        self.x = 0.0
-        self.y = 0.0
-        self.z = 0.0
-        self.th = 0.0
-        self.speed = 0.0
-        self.turn = 0.0
+        self.x      = 0.0
+        self.y      = 0.0
+        self.z      = 0.0
+        self.th     = 0.0
+        self.speed  = 0.0
+        self.turn   = 0.0
 
         self.cmd_pub = rospy.Publisher(cmd_control_topic, CmdControl, queue_size=1)
-        self.KPH = 0
-        self.Deg = 0
-        self.Brake = 0
+        self.MorA   = 0x00
+        self.EStop  = 0x00
+        self.Gear   = 0x01
+        self.KPH    = 0
+        self.Deg    = 0
+        self.Brake  = 0
 
         self.condition = threading.Condition()
         self.done = False
@@ -135,7 +149,7 @@ class PublishThread(threading.Thread):
         if rospy.is_shutdown():
             raise Exception("Got shutdown request before subscribers connected")
 
-    def update(self, x, y, z, th, speed, turn, KPH, Deg, Brake):
+    def update(self, x, y, z, th, speed, turn):
         self.condition.acquire()
         self.x = x
         self.y = y
@@ -143,16 +157,26 @@ class PublishThread(threading.Thread):
         self.th = th
         self.speed = speed
         self.turn = turn
-        self.KPH = KPH
-        self.Deg = Deg
-        self.Brake = Brake
+        # Notify publish thread that we have a new message.
+        self.condition.notify()
+        self.condition.release()
+
+    def update2(self, MorA, EStop, Gear, KPH, Deg, Brake):
+        self.condition.acquire()
+        self.MorA   = MorA
+        self.EStop  = EStop
+        self.Gear   = Gear
+        self.KPH    = KPH
+        self.Deg    = Deg
+        self.Brake  = Brake
         # Notify publish thread that we have a new message.
         self.condition.notify()
         self.condition.release()
 
     def stop(self):
         self.done = True
-        self.update(0, 0, 0, 0, 0, 0, 0, 0, 0)
+        self.update(0, 0, 0, 0, 0, 0)
+        self.update2(0x00, 0x00, 0x01, 0, 0, 0)
         self.join()
 
     def run(self):
@@ -171,8 +195,11 @@ class PublishThread(threading.Thread):
             twist.angular.y = 0
             twist.angular.z = self.th * self.turn
 
-            erp42_cmd_msg.KPH = self.KPH
-            erp42_cmd_msg.Deg = self.Deg
+            erp42_cmd_msg.MorA  = self.MorA
+            erp42_cmd_msg.EStop = self.EStop
+            erp42_cmd_msg.Gear  = self.Gear
+            erp42_cmd_msg.KPH   = self.KPH
+            erp42_cmd_msg.Deg   = self.Deg
             erp42_cmd_msg.brake = self.Brake
 
             self.condition.release()
@@ -180,9 +207,6 @@ class PublishThread(threading.Thread):
             self.publisher.publish(twist)
             if self.isDirect :
                 self.cmd_pub.publish(erp42_cmd_msg)
-            # Publish.
-
-
 
         # Publish stop message when thread exits.
         twist.linear.x = 0
@@ -209,10 +233,16 @@ def getKey(key_timeout):
 
 
 def twist_vels(speed, turn):
-    return "currently:\tspeed %s\tturn %s" % (speed,turn)
+    return "currently:\tspeed %s\tturn %s" %(speed,turn)
 
 def erp42_vels(KPH, Deg, Brake):
-    return "currently:\tKPH %s\tDeg %s\tBrake %s" % (KPH,Deg,Brake)
+    return "currently:\tKPH %s\tDeg %s\tBrake %s" %(KPH,Deg,Brake)
+def erp42_mode(MorA, EStop, Gear):
+    MorA = "Manual" if MorA == 0 else "Auto"
+    EStop = "OFF" if EStop == 0 else "ON"
+    Gear = {Gear == 0x00: "Forward", Gear == 0x02: "Backward"}.get(True, "Netural")
+    return "currently:\tMODE : {} EStop : {} Gear : {}".format(MorA,EStop,Gear)
+
 
 if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
@@ -234,18 +264,25 @@ if __name__=="__main__":
     y = 0
     z = 0
     th = 0
+    MorA = 0x00
+    EStop = 0x00
+    Gear = 0x01
     KPH = 0
     Deg = 0
     Brake = 0
     status = 0
 
+
     try:
 #        pub_thread.wait_for_subscribers()
-        pub_thread.update(x, y, z, th, speed, turn, KPH, Deg, Brake)
+        pub_thread.update(x, y, z, th, speed, turn)
+        pub_thread.update2(MorA, EStop, Gear, KPH, Deg, Brake)
 
         print(msg)
         print(twist_vels(speed,turn))
         print(erp42_vels(KPH, Deg, Brake))
+        cnt = 0
+
         while(1):
             key = getKey(key_timeout)
             if key in moveBindings.keys():
@@ -253,11 +290,12 @@ if __name__=="__main__":
                 y = moveBindings[key][1]
                 z = moveBindings[key][2]
                 th = moveBindings[key][3]
+
             elif key in speedBindings.keys():
                 speed = speed * speedBindings[key][0]
                 turn = turn * speedBindings[key][1]
-
                 print(twist_vels(speed,turn))
+
             elif key in keyBindings.keys():
 
                 KPH += keyBindings[key][0]
@@ -272,6 +310,20 @@ if __name__=="__main__":
                 Brake = clip(
                     Brake, pub_thread.Brake_range[0], pub_thread.Brake_range[1])
                 print(erp42_vels(KPH, Deg, Brake))
+
+
+            elif key in ModeBindings.keys():
+                if key == '[' or key == ']':
+                    MorA = ModeBindings[key]
+                elif key == ' ':
+                    cnt += 1
+                    EStop = ModeBindings[key][0] if cnt % 2 == 0 else ModeBindings[key][1]
+                    if cnt > 1:
+                        cnt = 0
+                elif key == '1' or '2' or '3':
+                    Gear = ModeBindings[key]
+                print(erp42_mode(MorA, EStop, Gear))
+
             else:
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
@@ -286,14 +338,16 @@ if __name__=="__main__":
                 Brake = 0
                 print(erp42_vels(KPH, Deg, Brake))
 
-            if (status == 14):
+            if (status == 19):
                 print(msg)
-            status = (status + 1) % 15
+            status = (status + 1) % 20
 
             if (key == '\x03' or key == '\x71'):
                 break
 
-            pub_thread.update(x, y, z, th, speed, turn, KPH, Deg, Brake)
+
+            pub_thread.update(x, y, z, th, speed, turn)
+            pub_thread.update2(MorA, EStop, Gear, KPH, Deg, Brake)
 
     except Exception as e:
         print(e)

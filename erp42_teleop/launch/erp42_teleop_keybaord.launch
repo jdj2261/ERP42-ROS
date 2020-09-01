@@ -6,9 +6,10 @@
             <node pkg="erp42_teleop" name="erp42_teleop_node" type="erp42_teleop_keyboard" output="screen">
                 <param name="speed" value="0.5"/>
                 <param name="turn" value="0.5"/>
-                <param name="repeat_rate" value="50.0"/>
+                <param name="repeat_rate" value="0.0"/>
                 <param name="cmd_topic" value="/cmd_vel"/>
                 <param name="key_timeout" value="0.0"/>
+                <param name="direct" value="True"/>
             </node>
         </group>
 </launch>
