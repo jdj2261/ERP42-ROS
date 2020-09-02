@@ -9,7 +9,7 @@ typedef struct _pc_to_erp42
   unsigned char S = 0x53;
   unsigned char T = 0x54;
   unsigned char X = 0x58;
-  uint8_t MorA = 0x01;  // Manual : 0x00, Auto : 0x01
+  uint8_t MorA = 0x00;  // Manual : 0x00, Auto : 0x01
   uint8_t E_stop = 0x00;
   uint8_t gear = 0x01;
   union speed{uint8_t speed[2]; uint16_t _speed;};  union speed speed;
@@ -21,7 +21,7 @@ typedef struct _pc_to_erp42
 }PC2ERP;
 
 const uint8_t SPEED_FACTOR=10;
-const uint8_t STEER_FACTOR=71;
+const int8_t STEER_FACTOR=-71;
 
 namespace unmansol
 {
@@ -49,12 +49,14 @@ public:
 
   // Callback (ROS)
   void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
+  void DriveCallback(const erp42_msgs::CmdControl::Ptr &msg);
 
 private:
   SerialPort serial_port_;
   ros::NodeHandle m_nh;
   ros::Publisher m_pub_feedback;
   ros::Subscriber m_sub_command;
+  ros::Subscriber m_sub_drive;
   erp42_msgs::SerialFeedBack m_feedback_msg;
 
   unsigned char m_read_data[18];

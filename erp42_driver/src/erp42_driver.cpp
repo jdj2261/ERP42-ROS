@@ -47,7 +47,7 @@ void ERP42Driver::Init_param()
 void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
-  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(erp42_interface_.ns_+"/command",1);
+  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(erp42_interface_.ns_+"/drive",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
 
@@ -132,7 +132,7 @@ void ERP42Driver::Run()
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 
     ros::spinOnce();
-    rate_.sleep();
+//    rate_.sleep();
   }
 }
 

@@ -90,17 +90,18 @@ void SerialPort::Read(unsigned char* rpacket, int packetsize){
   }
   std::string sName(reinterpret_cast<char*>(rpacket));
 
-  if (sName.length() == 0)
-    cout << "No data!" <<endl;
-  else
+  ssize_t n = read(fd, rpacket, packetsize);
+  if(n != packetsize)
   {
-    ssize_t n = read(fd, rpacket, packetsize);
-    if(n != packetsize)
-    {
-      cout << "read error!" << endl;
-    }
-    return;
+    cout << "read error!" << endl;
   }
+  return;
+
+//  if (sName.length() == 0)
+//    cout << "No data!" <<endl;
+//  else
+//  {
+//  }
 }
 void SerialPort::Read(string& data)
 {

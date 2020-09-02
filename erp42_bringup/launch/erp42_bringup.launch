@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+        <arg name="namespace" default="/erp42_serial"/>
+        <group ns="$(arg namespace)">
+            <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen">
+                <param name="serial_port" value="/dev/ttyUSB0"/>
+                <param name="serial_baudrate" value="115200"/>
+            </node>
+
+            <node pkg="erp42_driver" name="erp42_driver_node" type="erp42_driver_node" output="screen">
+                <param name="wheel_radius" value="0.265"/>
+                <param name="wheel_base" value="1.040"/>
+                <param name="wheel_tread" value="0.985"/>
+                <param name="max_vel" value="5.0"/>
+                <param name="min_vel" value="-5.0"/>
+                <param name="max_steer_angle" value="28.169"/>
+                <param name="min_steer_angle" value="-28.169"/>
+            </node>
+        </group>
+</launch>

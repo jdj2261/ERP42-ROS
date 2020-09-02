@@ -69,7 +69,7 @@ inline double MPS2KPH(const T& a)
 }
 
 int plus_or_minus(double value);
-
+A
 namespace unmansol
 {
 namespace erp42

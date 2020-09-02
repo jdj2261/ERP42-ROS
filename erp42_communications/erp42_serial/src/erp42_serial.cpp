@@ -9,8 +9,8 @@ ERP42Serial::ERP42Serial(
   serial_port_(device_name, serial_baudrate),
   m_nh("~")
 {
-  void Init_data();
-  void Init_node();
+  Init_data();
+  Init_node();
 }
 
 
@@ -26,11 +26,12 @@ void ERP42Serial::Init_node()
   std::string ns = ros::this_node::getNamespace();
   m_pub_feedback = m_nh.advertise<erp42_msgs::SerialFeedBack>(ns + "/feedback",1);
   m_sub_command = m_nh.subscribe(ns + "/command", 1, &ERP42Serial::CmdCtrlMsgCallback, this);
+  m_sub_drive = m_nh.subscribe(ns + "/drive", 1, &ERP42Serial::DriveCallback, this);
 }
 
 void ERP42Serial::Write()
 {
-  std::cout << "test" << std::endl;
+//  std::cout << "test" << std::endl;
   unsigned char writeBuffer[14];
   Update(writeBuffer);
   serial_port_.Write(writeBuffer,14);
@@ -90,7 +91,7 @@ void ERP42Serial::Update()
       speed_now |= (int)((m_read_data[idx + 7] << 8) & 0xff00);
       m_feedback_msg.speed = speed_now/SPEED_FACTOR;
 
-      std::cout << m_read_data[idx + 6] << std::endl;
+
 
       int steer_now = 0;
       steer_now |= (int)((m_read_data[idx + 8]) & 0xff);
@@ -108,6 +109,9 @@ void ERP42Serial::Update()
 
       m_feedback_msg.alive = m_read_data[idx+15];
 
+      std::cout << std::hex << (int)m_read_data[idx + 6] << std::endl;
+      std::cout << std::hex << (int)m_read_data[idx + 7] << std::endl;
+
       m_pub_feedback.publish(m_feedback_msg);
     }
   }
@@ -123,11 +127,16 @@ void ERP42Serial::CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg)
   m_pc2erp.MorA = msg->MorA;
   m_pc2erp.E_stop = msg->EStop;
   m_pc2erp.gear = msg->Gear;
-  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
-  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+//  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
+//  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
   m_pc2erp.brake = msg->brake;
 }
 
+void ERP42Serial::DriveCallback(const erp42_msgs::CmdControl::Ptr &msg)
+{
+  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
+  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+}
 
 
 

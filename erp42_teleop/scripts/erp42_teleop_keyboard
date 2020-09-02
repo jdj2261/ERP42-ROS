@@ -38,7 +38,7 @@ space : EStop On / OFF
 speed = rospy.get_param("~speed", 0.5)
 turn = rospy.get_param("~turn", 1.0)
 repeat = rospy.get_param("~repeat_rate", 0.0)
-direct = rospy.get_param("~direct", False)
+direct = rospy.get_param("~direct", True)
 CTRL-C or q to quit
 """
 
@@ -66,7 +66,9 @@ speedBindings={
 
 keyBindings={
         '8' : ( 1.0 , 0.0, 0),
-        '5' : ( 0.0 , 0.0, 1.0),
+        '5' : ( -1.0 , 0.0, 0),
+        '+' : ( 0.0 , 0.0, 1.0),
+        '-' : ( 0.0 , 0.0, -1.0),
         '4' : ( 0.0 , 1.0, 0),
         '6' : ( 0.0 , -1.0, 0),
     }
@@ -100,7 +102,8 @@ class PublishThread(threading.Thread):
 
         # self.cmd_vel_topic = '/cmd_vel'
         ns = rospy.get_namespace()
-        cmd_control_topic = ns + 'command'
+        mode_control_topic = ns + 'command'
+        drive_control_topic = ns + 'drive'
         self.isDirect = rospy.get_param("~direct", True)
 
         self.speed_range = [0, float(max_speed)]
@@ -120,14 +123,15 @@ class PublishThread(threading.Thread):
         self.speed  = 0.0
         self.turn   = 0.0
 
-        self.cmd_pub = rospy.Publisher(cmd_control_topic, CmdControl, queue_size=1)
+        self.mode_pub = rospy.Publisher(mode_control_topic, CmdControl, queue_size=1)
         self.MorA   = 0x00
         self.EStop  = 0x00
         self.Gear   = 0x01
-        self.KPH    = 0
-        self.Deg    = 0
         self.Brake  = 0
 
+        self.drive_pub = rospy.Publisher(drive_control_topic, CmdControl, queue_size=1)
+        self.KPH    = 0
+        self.Deg    = 0
         self.condition = threading.Condition()
         self.done = False
 
@@ -181,7 +185,8 @@ class PublishThread(threading.Thread):
 
     def run(self):
         twist = Twist()
-        erp42_cmd_msg = CmdControl()
+        erp42_mode_msg = CmdControl()
+        erp42_drive_msg = CmdControl()
         while not self.done:
             self.condition.acquire()
             # Wait for a new message or timeout.
@@ -195,18 +200,23 @@ class PublishThread(threading.Thread):
             twist.angular.y = 0
             twist.angular.z = self.th * self.turn
 
-            erp42_cmd_msg.MorA  = self.MorA
-            erp42_cmd_msg.EStop = self.EStop
-            erp42_cmd_msg.Gear  = self.Gear
-            erp42_cmd_msg.KPH   = self.KPH
-            erp42_cmd_msg.Deg   = self.Deg
-            erp42_cmd_msg.brake = self.Brake
+            erp42_mode_msg.MorA  = self.MorA
+            erp42_mode_msg.EStop = self.EStop
+            erp42_mode_msg.Gear  = self.Gear
+            erp42_mode_msg.brake = self.Brake
+
+            erp42_drive_msg.KPH   = self.KPH
+            erp42_drive_msg.Deg   = self.Deg
 
             self.condition.release()
 
-            self.publisher.publish(twist)
+            self.mode_pub.publish(erp42_mode_msg)
+
             if self.isDirect :
-                self.cmd_pub.publish(erp42_cmd_msg)
+                self.drive_pub.publish(erp42_drive_msg)
+            else:
+                self.publisher.publish(twist)
+
 
         # Publish stop message when thread exits.
         twist.linear.x = 0
@@ -215,14 +225,15 @@ class PublishThread(threading.Thread):
         twist.angular.x = 0
         twist.angular.y = 0
         twist.angular.z = 0
-        erp42_cmd_msg.KPH = 0
-        erp42_cmd_msg.Deg = 0
-        erp42_cmd_msg.brake = 0
-
-        self.publisher.publish(twist)
+        erp42_drive_msg.KPH = 0
+        erp42_drive_msg.Deg = 0
+        erp42_mode_msg.brake = 0
 
         if self.isDirect :
-            self.cmd_pub.publish(erp42_cmd_msg)
+            self.drive_pub.publish(erp42_drive_msg)
+            self.mode_pub.publish(erp42_mode_msg)
+        else:
+            self.publisher.publish(twist)
 
 def getKey(key_timeout):
     tty.setraw(sys.stdin.fileno())
