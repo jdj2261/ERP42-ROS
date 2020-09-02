@@ -28,14 +28,14 @@ void ERP42Interface::Init_node()
   if (this->ns_ == "/erp42_can")
   {
 
-    m_sub_steer   = m_nh.subscribe(this->ns_ + "/command",1, &ERP42Interface::SteerCallback, this);
+    m_sub_steer   = m_nh.subscribe(this->ns_ + "/drive",1, &ERP42Interface::SteerCallback, this);
     // real
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
     m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback2",1, &ERP42Interface::CANEncoderCallback, this);
   }
   else
   {
-    m_sub_steer   = m_nh.subscribe(this->ns_ + "/command",1, &ERP42Interface::SteerCallback, this);
+    m_sub_steer   = m_nh.subscribe(this->ns_ + "/drive",1, &ERP42Interface::SteerCallback, this);
     // real
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
     m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialEncoderCallback, this);
@@ -85,7 +85,7 @@ void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg
   m_encoder = msg->encoder;
 }
 
-void ERP42Interface::SteerCallback(const erp42_msgs::CmdControl::Ptr &msg)
+void ERP42Interface::SteerCallback(const erp42_msgs::DriveCmd::Ptr &msg)
 {
   m_steer_angle = DEG2RAD(msg->Deg);
 }

@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
    FILES
    CmdControl.msg
+   DriveCmd.msg
+   ModeCmd.msg
    CANFeedBack1.msg
    CANFeedBack2.msg
    CANtest.msg

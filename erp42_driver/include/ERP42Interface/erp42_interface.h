@@ -15,6 +15,8 @@
 #include <ros/ros.h>
 
 #include <erp42_msgs/CmdControl.h>
+#include <erp42_msgs/DriveCmd.h>
+#include <erp42_msgs/ModeCmd.h>
 #include <erp42_msgs/CANFeedBack1.h> // Publish Command
 #include <erp42_msgs/CANFeedBack2.h> // Subscribe Encoder
 
@@ -69,7 +71,7 @@ inline double MPS2KPH(const T& a)
 }
 
 int plus_or_minus(double value);
-A
+
 namespace unmansol
 {
 namespace erp42
@@ -122,7 +124,7 @@ protected:
 
   // callback
   void CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg);
-  void SteerCallback(const erp42_msgs::CmdControl::Ptr &msg);
+  void SteerCallback(const erp42_msgs::DriveCmd::Ptr &msg);
   void SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr &msg);
 
   // member variable

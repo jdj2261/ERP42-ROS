@@ -49,7 +49,7 @@ protected:
   ros::Rate rate_;
 
   ros::Publisher m_pub_odom;
-  ros::Publisher m_pub_cmdcontrol;
+  ros::Publisher m_pub_drive;
   ros::Publisher m_pub_test;
 
   ros::Subscriber m_sub_cmd_vel;
@@ -60,7 +60,7 @@ protected:
   ros::Time m_current_time;
   ros::Time m_last_time;
 
-  erp42_msgs::CmdControl m_cmdctrl_msg;
+  erp42_msgs::DriveCmd m_drive_msg;
 
   double m_last_odom_x;
 

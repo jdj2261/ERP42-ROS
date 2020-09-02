@@ -27,6 +27,8 @@
 
 #include <erp42_msgs/CmdControl.h>
 #include <erp42_msgs/SerialFeedBack.h>
+#include <erp42_msgs/DriveCmd.h>
+#include <erp42_msgs/ModeCmd.h>
 
 
 namespace unmansol

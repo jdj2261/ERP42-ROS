@@ -48,16 +48,19 @@ public:
   void Update();
 
   // Callback (ROS)
-  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
-  void DriveCallback(const erp42_msgs::CmdControl::Ptr &msg);
+//  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
+  void DriveCallback(const erp42_msgs::DriveCmd::Ptr &msg);
+  void ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg);
 
 private:
   SerialPort serial_port_;
   ros::NodeHandle m_nh;
   ros::Publisher m_pub_feedback;
-  ros::Subscriber m_sub_command;
+  ros::Publisher m_pub_cmdcontrol;
+  ros::Subscriber m_sub_mode;
   ros::Subscriber m_sub_drive;
   erp42_msgs::SerialFeedBack m_feedback_msg;
+  erp42_msgs::CmdControl m_cmdcontrol_msg;
 
   unsigned char m_read_data[18];
 

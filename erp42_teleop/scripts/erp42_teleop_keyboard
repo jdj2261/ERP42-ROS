@@ -9,7 +9,8 @@ import rospy
 from numpy import clip
 
 from geometry_msgs.msg import Twist
-from erp42_msgs.msg import CmdControl
+from erp42_msgs.msg import DriveCmd
+from erp42_msgs.msg import ModeCmd
 
 import sys, select, termios, tty
 import keyboard
@@ -102,7 +103,7 @@ class PublishThread(threading.Thread):
 
         # self.cmd_vel_topic = '/cmd_vel'
         ns = rospy.get_namespace()
-        mode_control_topic = ns + 'command'
+        mode_control_topic = ns + 'mode'
         drive_control_topic = ns + 'drive'
         self.isDirect = rospy.get_param("~direct", True)
 
@@ -123,15 +124,15 @@ class PublishThread(threading.Thread):
         self.speed  = 0.0
         self.turn   = 0.0
 
-        self.mode_pub = rospy.Publisher(mode_control_topic, CmdControl, queue_size=1)
+        self.mode_pub = rospy.Publisher(mode_control_topic, ModeCmd, queue_size=1)
         self.MorA   = 0x00
         self.EStop  = 0x00
         self.Gear   = 0x01
-        self.Brake  = 0
 
-        self.drive_pub = rospy.Publisher(drive_control_topic, CmdControl, queue_size=1)
+        self.drive_pub = rospy.Publisher(drive_control_topic, DriveCmd, queue_size=1)
         self.KPH    = 0
         self.Deg    = 0
+        self.Brake  = 0
         self.condition = threading.Condition()
         self.done = False
 
@@ -185,8 +186,8 @@ class PublishThread(threading.Thread):
 
     def run(self):
         twist = Twist()
-        erp42_mode_msg = CmdControl()
-        erp42_drive_msg = CmdControl()
+        erp42_mode_msg = ModeCmd()
+        erp42_drive_msg = DriveCmd()
         while not self.done:
             self.condition.acquire()
             # Wait for a new message or timeout.
@@ -203,10 +204,10 @@ class PublishThread(threading.Thread):
             erp42_mode_msg.MorA  = self.MorA
             erp42_mode_msg.EStop = self.EStop
             erp42_mode_msg.Gear  = self.Gear
-            erp42_mode_msg.brake = self.Brake
 
             erp42_drive_msg.KPH   = self.KPH
             erp42_drive_msg.Deg   = self.Deg
+            erp42_drive_msg.brake = self.Brake
 
             self.condition.release()
 
@@ -227,11 +228,11 @@ class PublishThread(threading.Thread):
         twist.angular.z = 0
         erp42_drive_msg.KPH = 0
         erp42_drive_msg.Deg = 0
-        erp42_mode_msg.brake = 0
+        erp42_drive_msg.brake = 0
 
+        self.mode_pub.publish(erp42_mode_msg)
         if self.isDirect :
             self.drive_pub.publish(erp42_drive_msg)
-            self.mode_pub.publish(erp42_mode_msg)
         else:
             self.publisher.publish(twist)
 

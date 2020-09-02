@@ -25,7 +25,8 @@ void ERP42Serial::Init_node()
 {
   std::string ns = ros::this_node::getNamespace();
   m_pub_feedback = m_nh.advertise<erp42_msgs::SerialFeedBack>(ns + "/feedback",1);
-  m_sub_command = m_nh.subscribe(ns + "/command", 1, &ERP42Serial::CmdCtrlMsgCallback, this);
+  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(ns + "/command", 1);
+  m_sub_mode = m_nh.subscribe(ns + "/mode", 1, &ERP42Serial::ModeCallback, this);
   m_sub_drive = m_nh.subscribe(ns + "/drive", 1, &ERP42Serial::DriveCallback, this);
 }
 
@@ -35,6 +36,7 @@ void ERP42Serial::Write()
   unsigned char writeBuffer[14];
   Update(writeBuffer);
   serial_port_.Write(writeBuffer,14);
+  m_pub_cmdcontrol.publish(m_cmdcontrol_msg);
 }
 
 void ERP42Serial::Update(unsigned char (&buffer)[14])
@@ -122,20 +124,27 @@ void ERP42Serial::Update()
 
 }
 
-void ERP42Serial::CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg)
+void ERP42Serial::ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg)
 {
   m_pc2erp.MorA = msg->MorA;
   m_pc2erp.E_stop = msg->EStop;
   m_pc2erp.gear = msg->Gear;
-//  m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
-//  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
-  m_pc2erp.brake = msg->brake;
+
+  m_cmdcontrol_msg.MorA = msg->MorA;
+  m_cmdcontrol_msg.EStop = msg->EStop;
+  m_cmdcontrol_msg.Gear = msg->Gear;
+
 }
 
-void ERP42Serial::DriveCallback(const erp42_msgs::CmdControl::Ptr &msg)
+void ERP42Serial::DriveCallback(const erp42_msgs::DriveCmd::Ptr &msg)
 {
   m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
   m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+  m_pc2erp.brake = msg->brake;
+
+  m_cmdcontrol_msg.KPH = msg->KPH;
+  m_cmdcontrol_msg.Deg = msg->Deg;
+  m_cmdcontrol_msg.brake = msg->brake;
 }
 
 

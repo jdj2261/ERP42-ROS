@@ -17,6 +17,9 @@
 #include <PCANBasic.h>
 
 #include <erp42_msgs/CmdControl.h>
+#include <erp42_msgs/DriveCmd.h>
+#include <erp42_msgs/ModeCmd.h>
+
 
 // command
 typedef struct _pc_to_erp42

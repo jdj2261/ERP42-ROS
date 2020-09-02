@@ -12,6 +12,7 @@ catkin_package(
     rospy
     geometry_msgs
     ackermann_msgs
+    erp42_msgs
   DEPENDS
 )
 

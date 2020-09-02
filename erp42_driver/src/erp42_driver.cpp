@@ -47,7 +47,7 @@ void ERP42Driver::Init_param()
 void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
-  m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(erp42_interface_.ns_+"/drive",1);
+  m_pub_drive = m_nh.advertise<erp42_msgs::DriveCmd>(erp42_interface_.ns_+"/drive",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
 }
 
@@ -67,19 +67,19 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
 
   std::cout << " Linear Vel : " << linear_vel << " Steer Angle: " << steering_angle <<std::endl;
 
-  m_cmdctrl_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
-  m_cmdctrl_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
+  m_drive_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
+  m_drive_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
-  m_cmdctrl_msg.KPH = MIN(MAX_KPH, m_cmdctrl_msg.KPH);
-  m_cmdctrl_msg.Deg = MIN(MAX_DEGREE, m_cmdctrl_msg.Deg);
-  m_cmdctrl_msg.Deg = MAX(-MAX_DEGREE, m_cmdctrl_msg.Deg);
+  m_drive_msg.KPH = MIN(MAX_KPH, m_drive_msg.KPH);
+  m_drive_msg.Deg = MIN(MAX_DEGREE, m_drive_msg.Deg);
+  m_drive_msg.Deg = MAX(-MAX_DEGREE, m_drive_msg.Deg);
 
-  m_pub_cmdcontrol.publish(m_cmdctrl_msg);
+  m_pub_drive.publish(m_drive_msg);
 
   ROS_DEBUG_STREAM_NAMED("test",
                          "Added values to command. "
-                         << "KPH: "   << m_cmdctrl_msg.KPH << ", "
-                         << "DEG: "   << m_cmdctrl_msg.Deg << ", ");
+                         << "KPH: "   << m_drive_msg.KPH << ", "
+                         << "DEG: "   << m_drive_msg.Deg << ", ");
 }
 
 void ERP42Driver::Update(ros::Time current_time)
