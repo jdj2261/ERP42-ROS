@@ -104,15 +104,21 @@ void ERP42Serial::Update()
 
       m_feedback_msg.brake   = m_read_data[idx + 10];
 
-      m_feedback_msg.encoder |= (long)((m_read_data[idx + 11]) & 0xff);
-      m_feedback_msg.encoder |= (long)((m_read_data[idx + 12] << 8) & 0xff00);
-      m_feedback_msg.encoder |= (long)((m_read_data[idx + 13] << 16) & 0xff0000);
-      m_feedback_msg.encoder |= (long)((m_read_data[idx + 14] << 24) & 0xff000000);
+      int32_t encoder = 0;
+      encoder |= (int32_t)((m_read_data[idx + 11]) & 0xff);
+      encoder |= (int32_t)((m_read_data[idx + 12] << 8) & 0xff00);
+      encoder |= (int32_t)((m_read_data[idx + 13] << 16) & 0xff0000);
+      encoder |= (int32_t)((m_read_data[idx + 14] << 24) & 0xff000000);
+
+      m_feedback_msg.encoder = encoder;
+
+//      for(int i=11; i<15; i++)
+//      {
+//        std::cout << std::hex << (int)m_read_data[i] << " ";
+//      }
+//      std::cout<< "encoder : " << (int)encoder << std::endl;
 
       m_feedback_msg.alive = m_read_data[idx+15];
-
-      std::cout << std::hex << (int)m_read_data[idx + 6] << std::endl;
-      std::cout << std::hex << (int)m_read_data[idx + 7] << std::endl;
 
       m_pub_feedback.publish(m_feedback_msg);
     }
