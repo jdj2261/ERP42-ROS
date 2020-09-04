@@ -181,7 +181,7 @@ class PublishThread(threading.Thread):
     def stop(self):
         self.done = True
         self.update(0, 0, 0, 0, 0, 0)
-        self.update2(0x00, 0x00, 0x01, 0, 0, 0)
+        self.update2(0x0, 0x00, 0x01, 0, 0, 0)
         self.join()
 
     def run(self):

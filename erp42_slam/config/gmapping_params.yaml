@@ -1,5 +1,6 @@
 map_update_interval: 2.0
-maxUrange: 3.0
+maxUrange: 28.0
+maxRange : 30.0
 sigma: 0.05
 kernelSize: 1
 lstep: 0.05
@@ -18,10 +19,10 @@ angularUpdate: 0.2
 temporalUpdate: 0.5
 resampleThreshold: 0.5
 particles: 100
-xmin: -10.0
-ymin: -10.0
-xmax: 10.0
-ymax: 10.0
+xmin: -20.0
+ymin: -20.0
+xmax: 20.0
+ymax: 20.0
 delta: 0.05
 llsamplerange: 0.01
 llsamplestep: 0.01
