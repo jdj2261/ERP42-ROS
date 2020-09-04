@@ -76,10 +76,10 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
 
   m_pub_drive.publish(m_drive_msg);
 
-  ROS_DEBUG_STREAM_NAMED("test",
-                         "Added values to command. "
-                         << "KPH: "   << m_drive_msg.KPH << ", "
-                         << "DEG: "   << m_drive_msg.Deg << ", ");
+//  ROS_DEBUG_STREAM_NAMED("test",
+//                         "Added values to command. "
+//                         << "KPH: "   << m_drive_msg.KPH << ", "
+//                         << "DEG: "   << m_drive_msg.Deg << ", ");
 }
 
 void ERP42Driver::Update(ros::Time current_time)
@@ -132,7 +132,7 @@ void ERP42Driver::Run()
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 
     ros::spinOnce();
-//    rate_.sleep();
+    rate_.sleep();
   }
 }
 

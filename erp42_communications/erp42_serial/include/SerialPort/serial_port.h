@@ -23,7 +23,7 @@
 #include <errno.h>   	// Error number definitions
 #include <termios.h> 	// POSIX terminal control definitions (struct termios)
 #include <system_error>	// For throwing std::system_error
-
+#include <math.h>
 
 #include <erp42_msgs/CmdControl.h>
 #include <erp42_msgs/SerialFeedBack.h>

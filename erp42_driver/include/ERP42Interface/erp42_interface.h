@@ -124,8 +124,8 @@ protected:
 
   // callback
   void CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg);
-  void SteerCallback(const erp42_msgs::DriveCmd::Ptr &msg);
-  void SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr &msg);
+  void CANSteerCallback(const erp42_msgs::CANFeedBack1::Ptr &msg);
+  void SerialDriveCallback(const erp42_msgs::SerialFeedBack::Ptr &msg);
 
   // member variable
   int32_t m_encoder;

@@ -21,7 +21,7 @@ typedef struct _pc_to_erp42
 }PC2ERP;
 
 const uint8_t SPEED_FACTOR=10;
-const int8_t STEER_FACTOR=-71;
+const int8_t STEER_FACTOR=71;
 
 namespace unmansol
 {

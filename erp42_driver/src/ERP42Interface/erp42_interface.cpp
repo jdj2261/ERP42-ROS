@@ -28,17 +28,15 @@ void ERP42Interface::Init_node()
   if (this->ns_ == "/erp42_can")
   {
 
-    m_sub_steer   = m_nh.subscribe(this->ns_ + "/drive",1, &ERP42Interface::SteerCallback, this);
+    m_sub_steer   = m_nh.subscribe(this->ns_ + "/feedback1",1, &ERP42Interface::CANSteerCallback, this);
     // real
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
     m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback2",1, &ERP42Interface::CANEncoderCallback, this);
   }
   else
   {
-    m_sub_steer   = m_nh.subscribe(this->ns_ + "/drive",1, &ERP42Interface::SteerCallback, this);
-    // real
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
-    m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialEncoderCallback, this);
+    m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialDriveCallback, this);
 
   }
 }
@@ -85,14 +83,17 @@ void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg
   m_encoder = msg->encoder;
 }
 
-void ERP42Interface::SteerCallback(const erp42_msgs::DriveCmd::Ptr &msg)
+void ERP42Interface::CANSteerCallback(const erp42_msgs::CANFeedBack1::Ptr &msg)
 {
-  m_steer_angle = DEG2RAD(msg->Deg);
+  m_steer_angle = DEG2RAD(msg->steer);
 }
 
-void ERP42Interface::SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr &msg)
+void ERP42Interface::SerialDriveCallback(const erp42_msgs::SerialFeedBack::Ptr &msg)
 {
   m_encoder = msg->encoder;
+  m_delta_encoder = m_encoder - m_last_encoder;
+//  std::cout << "Current Encoder: " << m_encoder << " ";
+  m_steer_angle = DEG2RAD(msg->steer);
 }
 
 
@@ -101,9 +102,10 @@ void ERP42Interface::SerialEncoderCallback(const erp42_msgs::SerialFeedBack::Ptr
 // Calculate ERP42 odometry
 void ERP42Interface::CalculateOdometry(double delta_time)
 {
-  m_delta_encoder = m_encoder - m_last_encoder;
-  m_wheel_pos = TICK2RAD * m_delta_encoder;
+
   m_last_encoder = m_encoder;
+  m_wheel_pos = TICK2RAD * m_delta_encoder;
+
 
   m_delta_pos = m_wheel_radius * m_wheel_pos;
 
@@ -114,14 +116,17 @@ void ERP42Interface::CalculateOdometry(double delta_time)
   m_odom_x += m_delta_pos * cos(m_odom_yaw);
   m_odom_y += m_delta_pos * sin(m_odom_yaw);
 
-
-  //  std::cout << "Delta Pose: " << m_delta_pos << " ";
-  //  std::cout << "Linear Vel: " << m_linear_vel<< " ";
-  //  std::cout << "Angular Vel: " << m_steer_angle<< " ";
-  //  std::cout << "tan Angular Vel: " << tan(m_steer_angle)<<" ";
-  //  std::cout << "Odom X : " << m_odom_x << " ";
-  //  std::cout << " Y : " << m_odom_y << " ";
-  //  std::cout << " Yaw : " << m_odom_yaw << std::endl;
+  std::cout << "Duration: " << delta_time << " ";
+  std::cout << "Previous Encoder: " << m_last_encoder << " ";
+//  std::cout << "Delta Encoder: " << m_delta_encoder << " ";
+//  std::cout << "Wheel Pose: " << m_wheel_pos << " ";
+  std::cout << "Delta Pose: " << m_delta_pos << " ";
+  std::cout << "Linear Vel: " << m_linear_vel<< " ";
+  std::cout << "Angular Vel: " << m_angular_vel<< " ";
+  std::cout << "Odom X : " << m_odom_x << " ";
+  std::cout << " Y : " << m_odom_y << " ";
+  std::cout << " Yaw : " << m_odom_yaw << std::endl;
+  std::cout << std::endl;
 
 
   if (isnan(m_delta_pos)){

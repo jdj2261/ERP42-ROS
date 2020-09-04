@@ -4,8 +4,8 @@
 using namespace unmansol::erp42;
 
 ERP42Serial::ERP42Serial(
-                         const char *device_name,
-                         int serial_baudrate):
+    const char *device_name,
+    int serial_baudrate):
   serial_port_(device_name, serial_baudrate),
   m_nh("~")
 {
@@ -23,7 +23,13 @@ void ERP42Serial::Init_data()
 
 void ERP42Serial::Init_node()
 {
+  // DEBUG MODE
+  if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
+    ros :: console :: notifyLoggerLevelsChanged ();
+  }
+
   std::string ns = ros::this_node::getNamespace();
+
   m_pub_feedback = m_nh.advertise<erp42_msgs::SerialFeedBack>(ns + "/feedback",1);
   m_pub_cmdcontrol = m_nh.advertise<erp42_msgs::CmdControl>(ns + "/command", 1);
   m_sub_mode = m_nh.subscribe(ns + "/mode", 1, &ERP42Serial::ModeCallback, this);
@@ -32,7 +38,7 @@ void ERP42Serial::Init_node()
 
 void ERP42Serial::Write()
 {
-//  std::cout << "test" << std::endl;
+  //  std::cout << "test" << std::endl;
   unsigned char writeBuffer[14];
   Update(writeBuffer);
   serial_port_.Write(writeBuffer,14);
@@ -61,9 +67,21 @@ void ERP42Serial::Update(unsigned char (&buffer)[14])
   buffer[12] = m_pc2erp.ETX0;
   buffer[13] = m_pc2erp.ETX1;
 
-  for(int i=0; i<14; i++)
+  // if It is Auto Mode, it can write serial data
+  if (m_feedback_msg.MorA == 0x01)
   {
-    std::cout << std::hex << (int)buffer[i] << " ";
+    std::cout << "\033[1;33mSending Packet..\033[0m\n";
+    for(int i=0; i<14; i++)
+    {
+      std::cout << std::hex << (int)buffer[i] << " ";
+    }
+  }
+  else
+  {
+    for(int i=0; i<14; i++)
+    {
+      std::cout << std::hex << (int)buffer[i] << " ";
+    }
   }
   std::cout << std::endl;
 }
@@ -71,7 +89,7 @@ void ERP42Serial::Update(unsigned char (&buffer)[14])
 void ERP42Serial::Read()
 {
   unsigned char num_read = 18;
-//  m_read_data = new unsigned char[num_read];
+  //  m_read_data = new unsigned char[num_read];
   serial_port_.Read(m_read_data, num_read);
   Update();
 }
@@ -112,11 +130,11 @@ void ERP42Serial::Update()
 
       m_feedback_msg.encoder = encoder;
 
-//      for(int i=11; i<15; i++)
-//      {
-//        std::cout << std::hex << (int)m_read_data[i] << " ";
-//      }
-//      std::cout<< "encoder : " << (int)encoder << std::endl;
+      //      for(int i=11; i<15; i++)
+      //      {
+      //        std::cout << std::hex << (int)m_read_data[i] << " ";
+      //      }
+      //      std::cout<< "encoder : " << (int)encoder << std::endl;
 
       m_feedback_msg.alive = m_read_data[idx+15];
 
@@ -145,7 +163,7 @@ void ERP42Serial::ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg)
 void ERP42Serial::DriveCallback(const erp42_msgs::DriveCmd::Ptr &msg)
 {
   m_pc2erp.speed._speed = msg->KPH * SPEED_FACTOR;
-  m_pc2erp.steer._steer = msg->Deg * STEER_FACTOR;
+  m_pc2erp.steer._steer = msg->Deg * (-1)*STEER_FACTOR;
   m_pc2erp.brake = msg->brake;
 
   m_cmdcontrol_msg.KPH = msg->KPH;
