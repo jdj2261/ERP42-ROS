@@ -57,5 +57,6 @@
     <!-- Load the joint controllers. One of these publishes the joint states
          to joint_states. -->
 
+    <node pkg="velodyne_laserscan" type="velodyne_laserscan_node" name="velodyne_laserscan_node" output="screen"/>
   </group>
 </launch>

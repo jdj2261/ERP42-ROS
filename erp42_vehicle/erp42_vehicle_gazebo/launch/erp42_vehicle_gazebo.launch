@@ -57,6 +57,8 @@
                 -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
             respawn="false"/>
 
+        <node pkg="velodyne_laserscan" type="velodyne_laserscan_node" name="velodyne_laserscan_node" output="screen"/>
+
     </group>
 
 </launch>

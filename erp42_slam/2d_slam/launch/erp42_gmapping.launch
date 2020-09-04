@@ -16,5 +16,4 @@
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
 
-  <node pkg="velodyne_laserscan" type="velodyne_laserscan_node" name="velodyne_laserscan_node" output="screen"/>
 </launch>
