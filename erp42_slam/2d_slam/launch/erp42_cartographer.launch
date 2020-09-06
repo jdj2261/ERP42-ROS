@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Arguments -->
+  <arg name="set_base_frame" default="base_link"/>
+  <arg name="set_odom_frame" default="odom"/>
+  <arg name="set_map_frame"  default="map"/>
+  <arg name="scan_topic" default="/scan" />
+  <arg name="configuration_basename" default="erp42_cartographer_2d.lua"/>
+
+<!-- cartographer_node -->
+  <node pkg="cartographer_ros" type="cartographer_node" name="cartographer_node"
+        args="-configuration_directory $(find erp42_slam)/config
+              -configuration_basename $(arg configuration_basename)"
+        output="screen">
+    <remap from="/imu" to="/flat_imu"/>
+    <!--remap from="points2" to="/camera/depth/points" / -->
+  </node>
+
+  <!-- cartographer_occupancy_grid_node -->
+  <node pkg="cartographer_ros" type="cartographer_occupancy_grid_node"
+  name="cartographer_occupancy_grid_node"
+  args="-resolution 0.05" />
+
+</launch>
