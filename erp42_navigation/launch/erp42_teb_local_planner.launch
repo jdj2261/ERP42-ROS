@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!-- Arguments -->
-  <arg name="map_file" default="$(find erp42_navigation)/maps/test.yaml"/>
+  <arg name="map_file" default="$(find erp42_slam)/maps/map_from_cartographer.yaml"/>
   <arg name="open_rviz" default="true"/>
   <arg name="move_forward_only" default="true"/>
   <arg name="cmd_vel_topic" default="/cmd_vel" />
@@ -15,7 +15,7 @@
   <include file="$(find erp42_navigation)/launch/amcl.launch"/>
 
 <!-- move_base -->
-<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
   <param name="base_local_planner" value="global_planner/GlobalPlanner" />
   <rosparam file="$(find erp42_navigation)/params/costmap/costmap_common_params.yaml" command="load" ns="global_costmap" />
   <rosparam file="$(find erp42_navigation)/params/costmap/costmap_common_params.yaml" command="load" ns="local_costmap" />

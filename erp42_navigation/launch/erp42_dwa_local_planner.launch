@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!-- Arguments -->
-  <arg name="map_file" default="$(find erp42_navigation)/maps/test.yaml"/>
+  <arg name="map_file" default="$(find erp42_slam)/maps/test.yaml"/>
   <arg name="open_rviz" default="true"/>
   <arg name="move_forward_only" default="true"/>
 
@@ -20,6 +20,6 @@
   <!-- rviz -->
   <group if="$(arg open_rviz)">
     <node pkg="rviz" type="rviz" name="rviz" required="true"
-          args="-d $(find erp42_navigation)/rviz/erp42_navigation.rviz"/>
+          args="-d $(find erp42_navigation)/rviz/dwa_planner_rviz.rviz"/>
   </group>
 </launch>

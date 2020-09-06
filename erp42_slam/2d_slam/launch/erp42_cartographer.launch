@@ -13,8 +13,9 @@
         args="-configuration_directory $(find erp42_slam)/config
               -configuration_basename $(arg configuration_basename)"
         output="screen">
-    <remap from="/imu" to="/flat_imu"/>
-    <!--remap from="points2" to="/camera/depth/points" / -->
+    <remap from="/imu" to="/imu"/>
+<!--    <remap from="points2" to="/camera/depth/points" />-->
+<!--    <remap from="points2" to="/velodyne_points"/>-->
   </node>
 
   <!-- cartographer_occupancy_grid_node -->
