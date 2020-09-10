@@ -34,16 +34,16 @@
     </plugin>
   </gazebo>
 
-  
+
 
   <!-- Math constants -->
   <xacro:property name="deg_to_rad" value="0.01745329251994329577"/>
 
   <!-- Robot base dimensions -->
-  <xacro:property name="base_length" value="0.5" /> 
-  <xacro:property name="base_width" value="0.3" /> 
-  <xacro:property name="base_height" value="0.1" /> 
-  <xacro:property name="base_mass" value="5" /> 
+  <xacro:property name="base_length" value="0.5" />
+  <xacro:property name="base_width" value="0.3" />
+  <xacro:property name="base_height" value="0.1" />
+  <xacro:property name="base_mass" value="5" />
 
   <!-- Wheel link dimensions -->
   <xacro:property name="wheel_radius" value="0.1" />
@@ -74,7 +74,7 @@
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
     </collision>
-    <xacro:solid_cuboid_inertial 
+    <xacro:solid_cuboid_inertial
         rpy="0 0 0" xyz="0 0 0"
         mass="${base_mass}"
         x="${base_length}" y="${base_width}" z="${base_height}" />
@@ -85,8 +85,8 @@
     name="front"
     parent="base"
     steer_radius="${steer_radius}"
-    steer_thickness="${steer_thickness}" 
-    steer_mass="${steer_mass}" 
+    steer_thickness="${steer_thickness}"
+    steer_mass="${steer_mass}"
     base_length="${base_length}"
     base_width="${base_width}"
     axle_offset="${axle_offset}"
@@ -103,16 +103,16 @@
   </xacro:rear_wheel>
 
   <!-- Steerable front wheels -->
-  <xacro:front_wheel_lr 
+  <xacro:front_wheel_lr
     name="front_right"
     parent="base"
     reflect="-1"
     wheel_radius="${wheel_radius}"
-    wheel_thickness="${wheel_thickness}" 
-    wheel_mass="${wheel_mass}" 
+    wheel_thickness="${wheel_thickness}"
+    wheel_mass="${wheel_mass}"
     steer_radius="${steer_radius}"
-    steer_thickness="${steer_thickness}" 
-    steer_mass="${steer_mass}" 
+    steer_thickness="${steer_thickness}"
+    steer_mass="${steer_mass}"
     base_length="${base_length}"
     base_width="${base_width}"
     axle_offset="${axle_offset}"
@@ -124,10 +124,10 @@
     reflect="1"
     wheel_radius="${wheel_radius}"
     wheel_thickness="${wheel_thickness}"
-    wheel_mass="${wheel_mass}" 
+    wheel_mass="${wheel_mass}"
     steer_radius="${steer_radius}"
-    steer_thickness="${steer_thickness}" 
-    steer_mass="${steer_mass}" 
+    steer_thickness="${steer_thickness}"
+    steer_mass="${steer_mass}"
     base_length="${base_length}"
     base_width="${base_width}"
     axle_offset="${axle_offset}"
@@ -158,7 +158,7 @@
   </gazebo>
 
             <!-- VLP-16 -->
-  
+
   <VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="50" samples="1024" gpu="false" lasers="16" max_range="100">
     <origin xyz="0 0 0.3" rpy="0 0 0" />
   </VLP-16>

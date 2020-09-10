@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
 
 <launch>
+        <!-- namespace [/erp42_serial, or /erp42_can] -->
         <arg name="namespace" default="/erp42_serial"/>
         <group ns="$(arg namespace)">
+            <!-- erp42_serial_bridge launch -->
             <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen">
                 <param name="serial_port" value="/dev/aten"/>
                 <param name="serial_baudrate" value="115200"/>
             </node>
 
+            <!-- erp42_driver launch -->
             <node pkg="erp42_driver" name="erp42_driver_node" type="erp42_driver_node" output="screen">
                 <param name="wheel_radius" value="0.265"/>
                 <param name="wheel_base" value="1.040"/>

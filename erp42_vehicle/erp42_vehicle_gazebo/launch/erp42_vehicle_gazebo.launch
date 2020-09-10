@@ -25,6 +25,8 @@
         <!-- Load the robot description -->
         <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
 
+
+<!--        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />-->
         <!-- Load ros_controllers configuration parameters -->
         <rosparam file="$(find erp42_gazebo_control)/config/ctrl_ackermann_steering_controller.yaml" command="load" ns="$(arg namespace)" />
         <rosparam file="$(find erp42_gazebo_control)/config/ctrl_gains.yaml" command="load" ns="$(arg namespace)" />
