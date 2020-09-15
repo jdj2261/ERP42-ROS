@@ -18,6 +18,8 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>rospy</depend>
   <depend>ackermann_msgs</depend>
+  <depend>ackermann_steering_controller</depend>
+  <depend>teleop_twist_keyboard</depend>
   <build_depend>geometry_msgs</build_depend>
   <build_export_depend>geometry_msgs</build_export_depend>
   <exec_depend>geometry_msgs</exec_depend>
