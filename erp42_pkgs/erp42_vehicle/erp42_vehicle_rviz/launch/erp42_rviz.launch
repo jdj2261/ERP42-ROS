@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- Display the robot model in rviz.
+-->
+<launch>
+
+    <arg name="rvizconfig" default="$(find erp42_vehicle_rviz)/rviz/model.rviz" />
+
+    <!-- Open rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" />
+
+</launch>

@@ -1,0 +1,35 @@
+<library path="lib/liblaser_detector_nodelets">
+
+  <class name="laser_detector/ScansMerger" 
+         type="laser_detector::ScansMergerNodelet" 
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Scans Merger Nodelet
+    </description>
+  </class>
+
+  <class name="laser_detector/ObstacleExtractor" 
+         type="laser_detector::ObstacleExtractorNodelet" 
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Obstacle Extractor Nodelet
+    </description>
+  </class>
+
+  <class name="laser_detector/ObstacleTracker" 
+         type="laser_detector::ObstacleTrackerNodelet" 
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Obstacle Tracker Nodelet
+    </description>
+  </class>
+
+  <class name="laser_detector/ObstaclePublisher" 
+         type="laser_detector::ObstaclePublisherNodelet" 
+         base_class_type="nodelet::Nodelet">
+    <description>
+      Obstacle Publisher Nodelet
+    </description>
+  </class>
+
+</library>
