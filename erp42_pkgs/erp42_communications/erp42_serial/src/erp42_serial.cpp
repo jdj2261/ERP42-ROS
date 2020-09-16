@@ -68,19 +68,19 @@ void ERP42Serial::Update(unsigned char (&buffer)[14])
   buffer[13] = m_pc2erp.ETX1;
 
   // if It is Auto Mode, it can write serial data
-  if (m_feedback_msg.MorA == 0x01)
+  if (m_feedback_msg.MorA == NEUTRAL)
   {
     std::cout << "\033[1;33mSending Packet..\033[0m\n";
-    for(int i=0; i<14; i++)
+    for(const auto &data : buffer)
     {
-      std::cout << std::hex << (int)buffer[i] << " ";
+      std::cout << std::hex << (int)data << " ";
     }
   }
   else
   {
-    for(int i=0; i<14; i++)
+    for(const auto &data : buffer)
     {
-      std::cout << std::hex << (int)buffer[i] << " ";
+      std::cout << std::hex << (int)data << " ";
     }
   }
   std::cout << std::endl;

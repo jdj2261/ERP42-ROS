@@ -22,6 +22,9 @@ namespace unmansol
 {
 namespace erp42
 {
+
+enum GEAR { FORWARD=0, NEUTRAL, REVERSE};
+
 class ERP42Driver
 {
 public:
@@ -39,6 +42,7 @@ public:
 
   // Callback (ROS)
   void CmdVelCallback(const geometry_msgs::Twist::Ptr &msg);
+  void ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg);
 ;
 
 private:
@@ -50,9 +54,12 @@ protected:
 
   ros::Publisher m_pub_odom;
   ros::Publisher m_pub_drive;
+  ros::Publisher m_pub_mode;
+
   ros::Publisher m_pub_test;
 
   ros::Subscriber m_sub_cmd_vel;
+  ros::Subscriber m_sub_mode;
 
   tf::TransformBroadcaster m_odom_broadcaster;
 
@@ -61,8 +68,14 @@ protected:
   ros::Time m_last_time;
 
   erp42_msgs::DriveCmd m_drive_msg;
+  erp42_msgs::ModeCmd m_mode_msg;
 
   double m_last_odom_x;
+
+  uint8_t m_mode_MorA;
+  uint8_t m_mode_EStop;
+  uint8_t m_mode_Gear;
+//  const char m_mode_alive;
 
 }; // class ERP42Driver
 

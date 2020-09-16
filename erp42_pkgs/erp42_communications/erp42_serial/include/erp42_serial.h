@@ -20,6 +20,7 @@ typedef struct _pc_to_erp42
   unsigned char ETX1 = 0x0A;
 }PC2ERP;
 
+enum GEAR { FORWARD=0x00, NEUTRAL, REVERSE};
 const uint8_t SPEED_FACTOR=10;
 const int8_t STEER_FACTOR=71;
 

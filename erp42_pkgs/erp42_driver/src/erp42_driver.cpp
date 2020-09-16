@@ -8,8 +8,10 @@ ERP42Driver::ERP42Driver():
   m_odom_broadcaster{},
   m_current_time(0.0),
   m_last_time(0.0),
-  m_last_odom_x(0.0)
-
+  m_last_odom_x(0.0),
+  m_mode_MorA(0),
+  m_mode_EStop(0),
+  m_mode_Gear(0)
 {
   Init_param();
   Init_node();
@@ -48,14 +50,16 @@ void ERP42Driver::Init_node()
 {
   m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
   m_pub_drive = m_nh.advertise<erp42_msgs::DriveCmd>(erp42_interface_.ns_+"/drive",1);
+  m_pub_mode = m_nh.advertise<erp42_msgs::ModeCmd>(erp42_interface_.ns_+"/mode",1);
   m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
+  m_sub_mode = m_nh.subscribe(erp42_interface_.ns_+"/without_gear_mode", 1, &ERP42Driver::ModeCallback, this);
 }
 
 void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
 {
   // m/s to KPH
-  double linear_vel = msg->linear.x;
-  double angular_vel = msg->angular.z;
+  const double linear_vel = msg->linear.x;
+  const double angular_vel = msg->angular.z;
   double radius = linear_vel / angular_vel;
   double steering_angle = atan(erp42_interface_.m_wheel_base / radius);
 
@@ -65,21 +69,37 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
     steering_angle = 0.0;
   }
 
+  m_mode_Gear = (linear_vel >= 0) ? FORWARD : REVERSE ;
+  m_mode_msg.MorA = m_mode_MorA;
+  m_mode_msg.EStop = m_mode_EStop;
+  m_mode_msg.Gear = m_mode_Gear;
+
+  std::cout << " MPS2KPH(linear_vel) " << MPS2KPH(linear_vel);
   std::cout << " Linear Vel : " << linear_vel << " Steer Angle: " << steering_angle <<std::endl;
 
-  m_drive_msg.KPH = static_cast<uint16_t>(MPS2KPH(linear_vel));
+  m_drive_msg.KPH = static_cast<uint16_t>(MPS2KPH(abs(linear_vel)));
   m_drive_msg.Deg = static_cast<int16_t>(RAD2DEG(steering_angle));
 
   m_drive_msg.KPH = MIN(MAX_KPH, m_drive_msg.KPH);
   m_drive_msg.Deg = MIN(MAX_DEGREE, m_drive_msg.Deg);
   m_drive_msg.Deg = MAX(-MAX_DEGREE, m_drive_msg.Deg);
 
+  m_pub_mode.publish(m_mode_msg);
   m_pub_drive.publish(m_drive_msg);
 
 //  ROS_DEBUG_STREAM_NAMED("test",
 //                         "Added values to command. "
 //                         << "KPH: "   << m_drive_msg.KPH << ", "
 //                         << "DEG: "   << m_drive_msg.Deg << ", ");
+}
+
+void ERP42Driver::ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg)
+{
+  m_mode_MorA = msg->MorA;
+  m_mode_EStop = msg->EStop;
+//  std::cout << " MorA : " << std::hex << (int)m_mode_MorA ;
+//  std::cout << " EStop : " << std::hex << (int)m_mode_MorA ;
+
 }
 
 void ERP42Driver::Update(ros::Time current_time)

@@ -105,6 +105,7 @@ class PublishThread(threading.Thread):
         ns = rospy.get_namespace()
         mode_control_topic = ns + 'mode'
         drive_control_topic = ns + 'drive'
+        without_gear_topic = ns + "without_gear_mode"
         self.isDirect = rospy.get_param("~direct", True)
 
         self.speed_range = [0, float(max_speed)]
@@ -125,6 +126,7 @@ class PublishThread(threading.Thread):
         self.turn   = 0.0
 
         self.mode_pub = rospy.Publisher(mode_control_topic, ModeCmd, queue_size=1)
+        self.gear_pub = rospy.Publisher(without_gear_topic, ModeCmd, queue_size=1)
         self.MorA   = 0x00
         self.EStop  = 0x00
         self.Gear   = 0x01
@@ -211,12 +213,12 @@ class PublishThread(threading.Thread):
 
             self.condition.release()
 
-            self.mode_pub.publish(erp42_mode_msg)
-
             if self.isDirect :
+                self.mode_pub.publish(erp42_mode_msg)
                 self.drive_pub.publish(erp42_drive_msg)
             else:
                 self.publisher.publish(twist)
+                self.gear_pub.publish(erp42_mode_msg)
 
 
         # Publish stop message when thread exits.
@@ -230,11 +232,12 @@ class PublishThread(threading.Thread):
         erp42_drive_msg.Deg = 0
         erp42_drive_msg.brake = 0
 
-        self.mode_pub.publish(erp42_mode_msg)
         if self.isDirect :
+            self.mode_pub.publish(erp42_mode_msg)
             self.drive_pub.publish(erp42_drive_msg)
         else:
             self.publisher.publish(twist)
+            self.gear_pub.publish(erp42_mode_msg)
 
 def getKey(key_timeout):
     tty.setraw(sys.stdin.fileno())
