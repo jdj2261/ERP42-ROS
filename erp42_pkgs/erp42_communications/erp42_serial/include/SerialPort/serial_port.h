@@ -1,5 +1,5 @@
-#ifndef CAN_VARIABLES_H
-#define CAN_VARIABLES_H
+#ifndef SERIAL_PORT_H
+#define SERIAL_PORT_H
 
 /*
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
@@ -78,4 +78,4 @@ protected:
 
 
 
-#endif // CAN_VARIABLES_H
+#endif // SERIAL_PORT_H

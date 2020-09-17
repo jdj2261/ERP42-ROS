@@ -152,7 +152,7 @@ void ERP42Driver::Run()
 //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
 
     ros::spinOnce();
-    rate_.sleep();
+    rate_.sleep();  // rate is 50hz
   }
 }
 

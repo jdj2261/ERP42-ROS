@@ -20,9 +20,14 @@ typedef struct _pc_to_erp42
   unsigned char ETX1 = 0x0A;
 }PC2ERP;
 
-enum GEAR { FORWARD=0x00, NEUTRAL, REVERSE};
-const uint8_t SPEED_FACTOR=10;
-const int8_t STEER_FACTOR=71;
+enum MorA { MANUAL=0x00, AUTO };
+enum GEAR { FORWARD=0x00, NEUTRAL, REVERSE };
+
+constexpr uint8_t SPEED_FACTOR{10};
+constexpr uint8_t STEER_FACTOR{71};
+constexpr int8_t MINUS_STEER_FACTOR{-71};
+constexpr uint8_t NUM_WRITE{14};
+constexpr uint8_t NUM_READ{18};
 
 namespace unmansol
 {
@@ -45,7 +50,7 @@ public:
   void Init_data();
   void Read();
   void Write();
-  void Update(unsigned char (&buffer)[14]);
+  void Update(unsigned char (&buffer)[NUM_WRITE]);
   void Update();
 
   // Callback (ROS)
@@ -63,8 +68,7 @@ private:
   erp42_msgs::SerialFeedBack m_feedback_msg;
   erp42_msgs::CmdControl m_cmdcontrol_msg;
 
-  unsigned char m_read_data[18];
-
+  unsigned char m_read_data[NUM_READ];
 
 protected:
   PC2ERP m_pc2erp;

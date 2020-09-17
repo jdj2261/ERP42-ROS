@@ -141,8 +141,6 @@ class PublishThread(threading.Thread):
         # Set timeout to None if rate is 0 (causes new_message to wait forever
         # for new data to publish)
 
-
-
         self.start()
 
     def wait_for_subscribers(self):
@@ -219,7 +217,6 @@ class PublishThread(threading.Thread):
             else:
                 self.publisher.publish(twist)
                 self.gear_pub.publish(erp42_mode_msg)
-
 
         # Publish stop message when thread exits.
         twist.linear.x = 0

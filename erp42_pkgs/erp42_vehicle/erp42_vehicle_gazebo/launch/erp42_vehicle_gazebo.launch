@@ -4,7 +4,7 @@
     <arg name="model" default="$(find erp42_vehicle_description)/urdf/erp42_vehicle.urdf.xacro"/>
     <arg name="namespace" default="/" />
     <arg name="world_name" default="$(find erp42_vehicle_gazebo)/worlds/clearpath_playpen.world" />
-    <arg name="cmd_timeout" default="0.05"/>
+    <arg name="use_sim_time" default="true"/>
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>
     <arg name="z" default="1.0" />
@@ -20,6 +20,7 @@
         <!-- Gazebo  -->
         <include file="$(find gazebo_ros)/launch/empty_world.launch">
             <arg name="world_name" default="$(arg world_name)"/>
+            <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         </include>
 
         <!-- Load the robot description -->

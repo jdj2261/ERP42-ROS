@@ -23,7 +23,7 @@ namespace unmansol
 namespace erp42
 {
 
-enum GEAR { FORWARD=0, NEUTRAL, REVERSE};
+enum GEAR { FORWARD=0x00, NEUTRAL, REVERSE};
 
 class ERP42Driver
 {

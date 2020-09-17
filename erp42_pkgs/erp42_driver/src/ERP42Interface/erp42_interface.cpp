@@ -27,7 +27,6 @@ void ERP42Interface::Init_node()
   // test
   if (this->ns_ == "/erp42_can")
   {
-
     m_sub_steer   = m_nh.subscribe(this->ns_ + "/feedback1",1, &ERP42Interface::CANSteerCallback, this);
     // real
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
@@ -37,7 +36,6 @@ void ERP42Interface::Init_node()
   {
     //  m_sub_steer   = m_nh.subscribe("/cmd_vel",1, &ERP42Interface::SteerCallback, this);
     m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialDriveCallback, this);
-
   }
 }
 
@@ -153,32 +151,6 @@ void ERP42Interface::SetOdometry(double new_x, double new_y, double new_yaw)
   m_odom_y   = new_y;
   m_odom_yaw = new_yaw;
 }
-
-//void ERP42Interface::integrateRungeKutta2(double linear, double angular)
-//{
-//  const double direction = heading_ + angular * 0.5;
-
-//  /// Runge-Kutta 2nd order integration:
-//  x_       += linear * cos(direction);
-//  y_       += linear * sin(direction);
-//  heading_ += angular;
-//}
-
-//void ERP42Interface::IntegrateExact(double linear, double angular)
-//{
-//  if (fabs(angular) < 1e-6)
-//    integrateRungeKutta2(linear, angular);
-//  else
-//  {
-//    /// Exact integration (should solve problems when angular is zero):
-//    const double heading_old = heading_;
-//    const double r = linear/angular;
-//    heading_ += angular;
-//    x_       +=  r * (sin(heading_) - sin(heading_old));
-//    y_       += -r * (cos(heading_) - cos(heading_old));
-//  }
-//}
-
 
 int plus_or_minus(double value)
 {
