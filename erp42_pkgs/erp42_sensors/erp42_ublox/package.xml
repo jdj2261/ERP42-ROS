@@ -53,6 +53,7 @@
   <build_depend>ublox_gps</build_depend>
   <build_depend>ublox_msgs</build_depend>
   <build_depend>ublox_serialization</build_depend>
+  <build_depend>diagnostic_updater</build_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
