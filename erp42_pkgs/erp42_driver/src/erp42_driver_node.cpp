@@ -6,9 +6,8 @@ int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "erp42_driver");
 
-  ERP42Driver* erp_driver = new ERP42Driver ;
+  std::shared_ptr<ERP42Driver> erp_driver = std::make_shared<ERP42Driver>();
   erp_driver->Run();
-  delete erp_driver;
 
   return 0;
 }

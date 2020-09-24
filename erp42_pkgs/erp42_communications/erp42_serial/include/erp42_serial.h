@@ -2,6 +2,7 @@
 #define SERIAL_NODE_H
 
 #include <SerialPort/serial_port.h>
+#include <memory>
 
 // command
 typedef struct _pc_to_erp42

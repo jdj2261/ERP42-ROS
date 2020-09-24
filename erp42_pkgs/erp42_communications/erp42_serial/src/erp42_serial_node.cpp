@@ -25,7 +25,8 @@ int main(int argc, char* argv[])
 //  nh_private.getParam("serial_port", port_name);
 //  nh_private.getParam("serial_baudrate", serial_baudrate);
 
-  ERP42Serial* erp42_serial = new ERP42Serial(port_name.c_str(), serial_baudrate);
+//  ERP42Serial* erp42_serial = new ERP42Serial(port_name.c_str(), serial_baudrate);
+  std::shared_ptr<ERP42Serial> erp42_serial = std::make_shared<ERP42Serial>(port_name.c_str(), serial_baudrate);
 
   ros::Rate loop(50); // 50Hz is 0.02s
   while(ros::ok())
@@ -37,7 +38,6 @@ int main(int argc, char* argv[])
     loop.sleep();
   }
 
-  delete erp42_serial;
   return 0;
 
 }
