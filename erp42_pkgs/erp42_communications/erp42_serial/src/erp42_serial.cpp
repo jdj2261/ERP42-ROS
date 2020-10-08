@@ -73,14 +73,14 @@ void ERP42Serial::Update(unsigned char (&buffer)[NUM_WRITE])
     std::cout << "\033[1;33mSending Packet..\033[0m\n";
     for(const auto &data : buffer)
     {
-      std::cout << "Write Data : " << std::hex << (int)data << " ";
+      std::cout << std::hex << (int)data << " ";
     }
   }
   else
   {
     for(const auto &data : buffer)
     {
-      std::cout << "Write Data : " <<std::hex << (int)data << " ";
+      std::cout << std::hex << (int)data << " ";
     }
   }
   std::cout << std::endl;
@@ -118,11 +118,6 @@ void ERP42Serial::Update()
       encoder |= (int32_t)((m_read_data[idx + 12] << 8) & 0xff00);
       encoder |= (int32_t)((m_read_data[idx + 13] << 16) & 0xff0000);
       encoder |= (int32_t)((m_read_data[idx + 14] << 24) & 0xff000000);
-
-      for(const auto &data : m_read_data)
-      {
-        std::cout << "Read Data : " << std::hex << (int)data << " ";
-      }
 
       m_feedback_msg.MorA     = m_read_data[idx + 3];
       m_feedback_msg.EStop    = m_read_data[idx + 4];
