@@ -1,0 +1,13 @@
+<!-- -*- mode: XML -*- -->
+<!-- run velodyne_height_map/HeightMapNodelet in a nodelet manager
+
+     $Id$
+  -->
+<launch>
+  <node pkg="velodyne_height_map" type="heightmap_node" name="heightmap_node">
+        <param name="cell_size" value="0.5"/>
+        <param name="height_threshold" value="0.25"/>
+        <param name="grid_dimensions" value="320"/>
+        <param name="full_clouds" value="false"/>
+  </node>
+</launch>
