@@ -104,7 +104,6 @@ void ERP42Interface::CalculateOdometry(double delta_time)
   m_last_encoder = m_encoder;
   m_wheel_pos = TICK2RAD * m_delta_encoder;
 
-
   m_delta_pos = m_wheel_radius * m_wheel_pos;
 
   m_linear_vel = m_delta_pos / delta_time;

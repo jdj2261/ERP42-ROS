@@ -7,7 +7,6 @@ int main(int argc, char* argv[])
 {
 
   ros::init(argc, argv, "erp42_serial");
-  ros::NodeHandle nh;
   ros::NodeHandle nh_private("~");
 
   std::string port_name;
@@ -32,7 +31,6 @@ int main(int argc, char* argv[])
   while(ros::ok())
   {
     ros::spinOnce();
-    erp42_serial->Init_node();
     erp42_serial->Write();
     erp42_serial->Read();
     loop.sleep();

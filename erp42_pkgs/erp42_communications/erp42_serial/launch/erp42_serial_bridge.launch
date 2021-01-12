@@ -2,11 +2,12 @@
 
 <launch>
         <arg name="namespace" default="/erp42_serial"/>
+        <arg name="port" default="/dev/ttyUSB0"/>
+        <arg name="baudrate" default="115200"/>
         <group ns="$(arg namespace)">
             <node pkg="erp42_serial" name="erp42_serial_node" type="erp42_serial_node" output="screen">
-                <param name="serial_port" value="/dev/ttyUSB0"/>
-                <param name="serial_baudrate" value="115200"/>
+                <param name="serial_port" value="$(arg port)"/>
+                <param name="serial_baudrate" value="$(arg baudrate)"/>
             </node>
         </group>
 </launch>
-

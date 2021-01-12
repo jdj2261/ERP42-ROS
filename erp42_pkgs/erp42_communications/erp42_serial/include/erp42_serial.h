@@ -1,6 +1,17 @@
 #ifndef SERIAL_NODE_H
 #define SERIAL_NODE_H
 
+/*
+ * Copyright 2020 UNMANNED SOLUTION CO., LTD.
+ * @file serial_interface.h
+ *
+ * @brief ERP42 Serial Interface
+ *
+ * Created on: 2020. 8. 31
+ * Contact: <jdj2261@unmansol.com>
+ * Author: Daejong Jin (djjin)
+ */
+
 #include <SerialPort/serial_port.h>
 #include <memory>
 

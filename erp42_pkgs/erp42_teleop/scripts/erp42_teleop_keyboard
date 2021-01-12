@@ -27,20 +27,20 @@ Direct Command(Number Key):
         8
    4    5    6
    1    2    3
-anything else : stop
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
-8   : increase only KPH by 1 (MAX 5)
-4/6 : increase/decrease only Degree by 2 (MAX 20)
-5   : increase only Brake by 2 (MAX 100)
-[ / ] : Manual / Auto
-space : EStop On / OFF
-1/2/3 : Gear Forward/Netural/Reverse
-speed = rospy.get_param("~speed", 0.5)
-turn = rospy.get_param("~turn", 1.0)
-repeat = rospy.get_param("~repeat_rate", 0.0)
-direct = rospy.get_param("~direct", True)
-CTRL-C or q to quit
+   anything else : stop
+   w/x : increase/decrease only linear speed by 10%
+   e/c : increase/decrease only angular speed by 10%
+   8   : increase only KPH by 1 (MAX 5)
+   4/6 : increase/decrease only Degree by 2 (MAX 20)
+   5   : increase only Brake by 2 (MAX 100)
+   [ / ] : Manual / Auto
+   space : EStop On / OFF
+   1/2/3 : Gear Forward/Netural/Reverse
+   speed = rospy.get_param("~speed", 0.5)
+   turn = rospy.get_param("~turn", 1.0)
+   repeat = rospy.get_param("~repeat_rate", 0.0)
+   direct = rospy.get_param("~direct", True)
+   CTRL-C or q to quit
 """
 
 moveBindings = {
@@ -297,6 +297,9 @@ if __name__=="__main__":
 
         while(1):
             key = getKey(key_timeout)
+            if (key == '\x03' or key == '\x71'):
+                break
+
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
                 y = moveBindings[key][1]
@@ -353,10 +356,6 @@ if __name__=="__main__":
             if (status == 19):
                 print(msg)
             status = (status + 1) % 20
-
-            if (key == '\x03' or key == '\x71'):
-                break
-
 
             pub_thread.update(x, y, z, th, speed, turn)
             pub_thread.update2(MorA, EStop, Gear, KPH, Deg, Brake)

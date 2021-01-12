@@ -88,9 +88,9 @@ void ERP42Serial::Update(unsigned char (&buffer)[NUM_WRITE])
 
 void ERP42Serial::Read()
 {
-  unsigned char num_read = 18;
+//  unsigned char num_read = 18;
 //  m_read_data = new unsigned char[num_read];
-  serial_port_.Read(m_read_data, num_read);
+  serial_port_.Read(m_read_data, NUM_READ);
   Update();
 }
 
@@ -107,11 +107,11 @@ void ERP42Serial::Update()
       speed_now |= (int)((m_read_data[idx + 7] << 8) & 0xff00);
 
       int steer_now = 0;
-      steer_now |= (int)((m_read_data[idx + 8]) & 0xff);
-      steer_now |= (int)((m_read_data[idx + 9] << 8) & 0xff00);
-
       if (steer_now > 30000)
         steer_now = steer_now - 65536;
+
+      steer_now |= (int)((m_read_data[idx + 8]) & 0xff);
+      steer_now |= (int)((m_read_data[idx + 9] << 8) & 0xff00);
 
       int32_t encoder = 0;
       encoder |= (int32_t)((m_read_data[idx + 11]) & 0xff);

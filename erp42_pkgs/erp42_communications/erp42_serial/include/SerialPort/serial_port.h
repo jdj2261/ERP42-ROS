@@ -5,7 +5,7 @@
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
  * @file serial_interface.h
  *
- * @brief ERP42 Serial Interface
+ * @brief ERP42 Serial Port
  *
  * Created on: 2020. 8. 31
  * Contact: <jdj2261@unmansol.com>
@@ -64,15 +64,10 @@ private:
   const static unsigned char defaultReadBufferSize = 255;
 
 protected:
-
-
-  void Init_param();
-  int Init_serial();
-
   std::string m_serial_port;
   int m_serial_baudrate;
 
-}; // class SerialInterface
+}; // class SerialPort
 } // namespace erp42
 } // namespace unmansol
 
