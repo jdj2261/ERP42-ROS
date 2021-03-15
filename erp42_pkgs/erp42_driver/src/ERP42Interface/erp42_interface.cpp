@@ -89,7 +89,7 @@ void ERP42Interface::CANSteerCallback(const erp42_msgs::CANFeedBack1::Ptr &msg)
 void ERP42Interface::SerialDriveCallback(const erp42_msgs::SerialFeedBack::Ptr &msg)
 {
   m_encoder = msg->encoder;
-  m_delta_encoder = m_encoder - m_last_encoder;
+//  m_delta_encoder = m_encoder - m_last_encoder;
 //  std::cout << "Current Encoder: " << m_encoder << " ";
   m_steer_angle = DEG2RAD(msg->steer);
 }
@@ -100,7 +100,7 @@ void ERP42Interface::SerialDriveCallback(const erp42_msgs::SerialFeedBack::Ptr &
 // Calculate ERP42 odometry
 void ERP42Interface::CalculateOdometry(double delta_time)
 {
-
+  m_delta_encoder = m_encoder - m_last_encoder;
   m_last_encoder = m_encoder;
   m_wheel_pos = TICK2RAD * m_delta_encoder;
 
