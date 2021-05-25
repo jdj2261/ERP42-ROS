@@ -5,7 +5,24 @@
 Common ROS packages for the [Unmanned Solution](http://www.unmansol.com/index.html) ERP42, useable for both simulation and real robot operation.
 
 - [packages](https://github.com/jdj2261/ERP-ROS/tree/master/packages)
+
+  <details>
+    <summary>detail package</summary>
+
+  - erp42_bringup
+  - erp42_communications
+  - erp42_driver
+  - erp42_msgs
+  - erp42_navigation
+  - erp42_sensors
+  - erp42_slam
+  - erp42_teleop
+  - erp42_vehicle
+
+  </details>
+
 - [etc](https://github.com/jdj2261/ERP-ROS/tree/master/etc)
+  
   - erp42_detectors
   - erp42_slams
 
