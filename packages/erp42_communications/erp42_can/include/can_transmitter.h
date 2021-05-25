@@ -41,35 +41,35 @@ class ERP42Transmitter
 {
 
 public:
-  ERP42Transmitter();
-  virtual ~ERP42Transmitter()
-  {
-    std::cout << " Control Finished... " << std::endl;
-  }
+    ERP42Transmitter();
+    virtual ~ERP42Transmitter()
+    {
+        std::cout << " Control Finished... " << std::endl;
+    }
 
-  bool Connect();
-  void Init_data();
-  void Init_node();
-  void Write();
+    bool Connect();
+    void Init_data();
+    void Init_node();
+    void Write();
 
-  // Callback (ROS)
-  void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
+    // Callback (ROS)
+    void CmdCtrlMsgCallback(const erp42_msgs::CmdControl::Ptr &msg);
 
-  bool is_enable_can;
+    bool is_enable_can;
 
 protected:
-  TPCANMsg m_TMessage;
-  TPCANStatus m_TStatus;
+    TPCANMsg m_TMessage;
+    TPCANStatus m_TStatus;
 
-  PC2ERP m_pc2erp;
+    PC2ERP m_pc2erp;
 
-  ros::NodeHandle m_nh;
-  ros::Subscriber m_sub_command;
-  std::string ns_;
+    ros::NodeHandle m_nh;
+    ros::Subscriber m_sub_command;
+    std::string ns_;
 
-  erp42_msgs::CmdControl m_cmd_ctrl_msg;
+    erp42_msgs::CmdControl m_cmd_ctrl_msg;
 
-  uint8_t m_AlvCnt;
+    uint8_t m_AlvCnt;
 
 }; // class ERP42Transmitter
 } // namespace can

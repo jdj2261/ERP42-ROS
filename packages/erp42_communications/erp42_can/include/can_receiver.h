@@ -52,39 +52,39 @@ namespace can
 class ERP42Receiver
 {
 public:
-  ERP42Receiver();
-  virtual ~ERP42Receiver()
-  {
-    std::cout << " Receiver Finished... " << std::endl;
-  }
+    ERP42Receiver();
+    virtual ~ERP42Receiver()
+    {
+        std::cout << " Receiver Finished... " << std::endl;
+    }
 
-  bool Connect();
-  void Init_node();
-  void Read();
-  void Update();
+    bool Connect();
+    void Init_node();
+    void Read();
+    void Update();
 
-  bool isConnect;
+    bool isConnect;
 
 
 protected:
-  TPCANMsg m_RMessage;
+    TPCANMsg m_RMessage;
 
-  TPCANStatus m_RStatus;
+    TPCANStatus m_RStatus;
 
-//  ERP2PC_1 m_erp2pc_1;
-//  ERP2PC_2 m_erp2pc_2;
+    //  ERP2PC_1 m_erp2pc_1;
+    //  ERP2PC_2 m_erp2pc_2;
 
-  ros::NodeHandle m_nh;
-  ros::Publisher m_pub_feedback1;
-  ros::Publisher m_pub_feedback2;
+    ros::NodeHandle m_nh;
+    ros::Publisher m_pub_feedback1;
+    ros::Publisher m_pub_feedback2;
 
-  std::string ns_;
+    std::string ns_;
 
-  erp42_msgs::CANFeedBack1 m_feedback1_msg;
-  erp42_msgs::CANFeedBack2 m_feedback2_msg;
+    erp42_msgs::CANFeedBack1 m_feedback1_msg;
+    erp42_msgs::CANFeedBack2 m_feedback2_msg;
 
-  ros::Publisher m_pub_test;
-  erp42_msgs::CANtest m_test_msg;
+    ros::Publisher m_pub_test;
+    erp42_msgs::CANtest m_test_msg;
 
 }; // class ERP42Receiver
 } // namespace can

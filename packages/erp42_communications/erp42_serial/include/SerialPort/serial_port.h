@@ -1,6 +1,4 @@
-#ifndef SERIAL_PORT_H
-#define SERIAL_PORT_H
-
+#pragma once
 /*
  * Copyright 2020 UNMANNED SOLUTION CO., LTD.
  * @file serial_interface.h
@@ -38,44 +36,31 @@ namespace erp42
 class SerialPort
 {
 public:
-  SerialPort(const char *device_name, int baudrate);
-  virtual ~SerialPort()
-  {
-    std::cout << " Serial Closed..." << std::endl;
-    std::cout << " Interface Finished... " << std::endl;
-  }
+    SerialPort(const char *device_name, const int &baudrate);
+    virtual ~SerialPort()
+    {
+        std::cout << "Serial Closed..." << std::endl;
+    }
 
-  ros::NodeHandle m_nh;
-//  serial::Serial ser;
-  std::string ns_;
+    ros::NodeHandle m_nh;
+    std::string ns_;
 
-  void Open(const char *device_name, int baudrate);
-  void Close();
-  void Configure(int baudrate);
+    bool Open();
+    void Close();
+    void Configure();
 
-  void Read(unsigned char* rpacket, int packetsize);
-  void Read(std::string& data);
-  void Write(unsigned char*  wpacket, int packetsize);
-  void Write(const std::string& data);
+    bool Read(unsigned char* rpacket, int packetsize);
+    bool Read(std::string& data);
+    bool Write(unsigned char* wpacket, int packetsize);
+    bool Write(const std::string& data);
 
 private:
-  int fd; // File Descriptor
-  std::vector<char> readBuffer;
-  const static unsigned char defaultReadBufferSize = 255;
-
-protected:
-
-
-  void Init_param();
-  int Init_serial();
-
-  std::string m_serial_port;
-  int m_serial_baudrate;
+    const char *m_device_name;
+    const int m_baudrate;
+    int fd; // File Descriptor
+    std::vector<char> readBuffer;
+    const static unsigned char defaultReadBufferSize = 255;
 
 }; // class SerialInterface
 } // namespace erp42
 } // namespace unmansol
-
-
-
-#endif // SERIAL_PORT_H
