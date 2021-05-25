@@ -48,7 +48,7 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
    $ catkin_make
    ~~~
 
-5.  source your new workspace instead of the base melodic install.
+5. source your new workspace instead of the base melodic install.
 
    ~~~
    $ source ~/erp42_melodic_ws/devel/setup.bash
@@ -103,11 +103,11 @@ It can be used in **real environment** and **virtual environment** using Gazebo 
 <details>
   <summary>Real environment</summary> 
 
-- core package launch
+- core package
 
   `$ roslaunch erp42_bringup erp42_core.launch`
 
-- velodyne vlp-16 package launch (optional)
+- velodyne vlp-16 package (optional)
 
   `$ roslaunch erp42_bringup erp42_velodyne.launch`
 
@@ -125,8 +125,6 @@ It can be used in **real environment** and **virtual environment** using Gazebo 
   ` roslaunch erp42_vehicle_gazebo erp42_vehicle_gazebo.launch`
 
 </details>
-
-
 
 ### TODO
 
