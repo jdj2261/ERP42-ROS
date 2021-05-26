@@ -7,11 +7,11 @@ ERP42Transmitter::ERP42Transmitter():
     m_nh("~"),
     m_AlvCnt(0)
 {
-    Init_data();
-    Init_node();
+    InitData();
+    InitNode();
 }
 
-void ERP42Transmitter::Init_data()
+void ERP42Transmitter::InitData()
 {
     m_TMessage.ID = CAN_COMMAND_ID;
     m_TMessage.LEN = CAN_DATA_LENGTH;
@@ -24,7 +24,7 @@ void ERP42Transmitter::Init_data()
     m_pc2erp.brake = 0x00;
 }
 
-void ERP42Transmitter::Init_node()
+void ERP42Transmitter::InitNode()
 {
     this->ns_ = ros::this_node::getNamespace();
     m_nh.param("enable_can",enable_can,enable_can);

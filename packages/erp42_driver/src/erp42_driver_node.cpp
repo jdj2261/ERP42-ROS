@@ -2,7 +2,7 @@
 
 using namespace unmansol::erp42;
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     ros::init(argc, argv, "erp42_driver");
 

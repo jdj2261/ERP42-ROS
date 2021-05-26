@@ -14,8 +14,7 @@
 #include <erp42_msgs/CmdControl.h>
 #include <erp42_msgs/DriveCmd.h>
 #include <erp42_msgs/ModeCmd.h>
-#include <erp42_msgs/CANFeedBack1.h> // Publish Command
-#include <erp42_msgs/CANFeedBack2.h> // Subscribe Encoder
+#include <erp42_msgs/CANFeedBack.h> // Publish Command
 #include <erp42_msgs/SerialFeedBack.h> // Subscribe Encoder
 #include <cmath>
 
@@ -115,13 +114,13 @@ namespace erp42
         ros::Subscriber m_sub_steer;
         ros::Subscriber m_sub_encoder;
 
-        erp42_msgs::CANFeedBack2 m_feedback2_msg;
+        erp42_msgs::CANFeedBack m_feedback2_msg;
 
         void InitNode();
 
         // callback
-        void CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg);
-        void CANSteerCallback(const erp42_msgs::CANFeedBack1::Ptr &msg);
+        void CANEncoderCallback(const erp42_msgs::CANFeedBack::Ptr &msg);
+        void CANSteerCallback(const erp42_msgs::CANFeedBack::Ptr &msg);
         void SerialDriveCallback(const erp42_msgs::SerialFeedBack::Ptr &msg);
 
         // member variable

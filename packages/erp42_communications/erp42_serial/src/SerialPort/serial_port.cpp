@@ -10,7 +10,8 @@ SerialPort::SerialPort(const char *device_name, const int &baudrate)
     readBuffer.reserve(defaultReadBufferSize);
 }
 
-bool SerialPort::Open(){
+bool SerialPort::Open()
+{
     if (!strlen(m_device_name)){
         cout << "Device path has not been assigned" << endl;
         return false;
@@ -27,7 +28,8 @@ bool SerialPort::Open(){
     return true;
 }
 
-void SerialPort::Close(){
+void SerialPort::Close()
+{
     if(fd != -1){
         auto retVal = close(fd);
         if(retVal != 0){
@@ -38,7 +40,8 @@ void SerialPort::Close(){
     }
 }
 
-void SerialPort::Configure(){
+void SerialPort::Configure()
+{
     struct termios tty;
     memset(&tty, 0, sizeof(tty));
     if(tcgetattr(fd, &tty) != 0)

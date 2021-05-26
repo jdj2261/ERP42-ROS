@@ -2,17 +2,17 @@
 
 using namespace unmansol::erp42;
 
-ERP42Driver::ERP42Driver():
-    erp42_interface_(new ERP42Interface()),
-    m_nh("~"),
-    rate_(50),
-    m_odom_broadcaster{},
-    m_current_time(0.0),
-    m_last_time(0.0),
-    m_last_odom_x(0.0),
-    m_mode_MorA(0),
-    m_mode_EStop(0),
-    m_mode_Gear(0)
+ERP42Driver::ERP42Driver()
+    : erp42_interface_(new ERP42Interface()),
+      m_nh("~"),
+      rate_(50),
+      m_odom_broadcaster{},
+      m_current_time(0.0),
+      m_last_time(0.0),
+      m_last_odom_x(0.0),
+      m_mode_MorA(0),
+      m_mode_EStop(0),
+      m_mode_Gear(0)
 {
     InitParam();
     InitNode();

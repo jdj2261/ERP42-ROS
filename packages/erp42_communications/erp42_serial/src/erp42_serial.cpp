@@ -4,10 +4,10 @@ using namespace unmansol::erp42;
 
 ERP42Serial::ERP42Serial(
         const char *device_name,
-        int serial_baudrate):
-    serial_port_(new SerialPort(device_name, serial_baudrate)),
-    m_nh("~"),
-    m_loop(50)
+        int serial_baudrate)
+    : serial_port_(new SerialPort(device_name, serial_baudrate)),
+      m_nh("~"),
+      m_loop(50)
 {
     InitData();
     UpdateNode();

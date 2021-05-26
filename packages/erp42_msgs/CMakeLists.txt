@@ -11,9 +11,7 @@ add_message_files(
    CmdControl.msg
    DriveCmd.msg
    ModeCmd.msg
-   CANFeedBack1.msg
-   CANFeedBack2.msg
-   CANtest.msg
+   CANFeedBack.msg
    SerialFeedBack.msg
 )
 

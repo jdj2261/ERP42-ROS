@@ -48,8 +48,8 @@ public:
     }
 
     bool Connect();
-    void Init_data();
-    void Init_node();
+    void InitData();
+    void InitNode();
     void Write();
 
     // Callback (ROS)

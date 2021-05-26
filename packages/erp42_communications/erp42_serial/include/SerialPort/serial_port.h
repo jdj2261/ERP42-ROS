@@ -33,29 +33,29 @@ namespace unmansol
 {
 namespace erp42
 {
-class SerialPort
-{
-public:
-    SerialPort(const char *device_name, const int &baudrate);
-    virtual ~SerialPort()
+    class SerialPort
     {
-        std::cout << "Serial Closed..." << std::endl;
-    }
+    public:
+        SerialPort(const char *device_name, const int &baudrate);
+        virtual ~SerialPort()
+        {
+            std::cout << "Serial Closed..." << std::endl;
+        }
 
-    bool Open();
-    bool Read(unsigned char* rpacket, const size_t &packetsize);
-    bool Write(unsigned char* wpacket, const size_t &packetsize);
+        bool Open();
+        bool Read(unsigned char* rpacket, const size_t &packetsize);
+        bool Write(unsigned char* wpacket, const size_t &packetsize);
 
-    void Close();
+        void Close();
 
-private:
-    const char *m_device_name;
-    const int m_baudrate;
-    int fd; // File Descriptor
-    std::vector<char> readBuffer;
-    const static unsigned char defaultReadBufferSize = 255;
-    void Configure();
+    private:
+        const char *m_device_name;
+        const int m_baudrate;
+        int fd; // File Descriptor
+        std::vector<char> readBuffer;
+        const static unsigned char defaultReadBufferSize = 255;
+        void Configure();
 
-}; // class SerialInterface
+    }; // class SerialInterface
 } // namespace erp42
 } // namespace unmansol

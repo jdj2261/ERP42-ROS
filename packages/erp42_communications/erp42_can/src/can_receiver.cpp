@@ -6,15 +6,14 @@ using namespace unmansol::erp42::can;
 ERP42Receiver::ERP42Receiver():
     m_nh("~")
 {
-    Init_node();
+    InitNode();
 }
 
-void ERP42Receiver::Init_node()
+void ERP42Receiver::InitNode()
 {
     this->ns_ = ros::this_node::getNamespace();
-    m_pub_feedback1 = m_nh.advertise<erp42_msgs::CANFeedBack1>(this->ns_ + "/feedback1",1);
-    m_pub_feedback2 = m_nh.advertise<erp42_msgs::CANFeedBack2>(this->ns_ + "/feedback2",1);
-    m_pub_test = m_nh.advertise<erp42_msgs::CANtest>(this->ns_ + "/test",1);
+    m_pub_feedback1 = m_nh.advertise<erp42_msgs::CANFeedBack>(this->ns_ + "/feedback1",1);
+    m_pub_feedback2 = m_nh.advertise<erp42_msgs::CANFeedBack>(this->ns_ + "/feedback2",1);
 }
 
 void ERP42Receiver::Read()
@@ -41,39 +40,31 @@ void ERP42Receiver::Update()
     case CAN_FEEDBACK_ID_1:
         std::cout << "feedback_1" << std::endl;
 
-        m_feedback1_msg.MorA  = m_RMessage.DATA[0] & 0x01;
-        m_feedback1_msg.EStop = m_RMessage.DATA[0] & 0x02;
-        m_feedback1_msg.Gear  = m_RMessage.DATA[0] & 0x0c;
-        m_feedback1_msg.speed = ((m_RMessage.DATA[2] << 8 ) & 0xff00  | (m_RMessage.DATA[1] & 0xff))/SPEED_FACTOR;
-        m_feedback1_msg.steer = ((m_RMessage.DATA[4] << 8 ) & 0xff00  | (m_RMessage.DATA[3] & 0xff))/STEER_FACTOR;
-        m_feedback1_msg.brake = m_RMessage.DATA[5];
-        m_feedback1_msg.alive = m_RMessage.DATA[7];
-        m_pub_feedback1.publish(m_feedback1_msg);
+        m_feedback_msg.MorA  = m_RMessage.DATA[0] & 0x01;
+        m_feedback_msg.EStop = m_RMessage.DATA[0] & 0x02;
+        m_feedback_msg.Gear  = m_RMessage.DATA[0] & 0x0c;
+        m_feedback_msg.speed = ((m_RMessage.DATA[2] << 8 ) & 0xff00  | (m_RMessage.DATA[1] & 0xff))/SPEED_FACTOR;
+        m_feedback_msg.steer = ((m_RMessage.DATA[4] << 8 ) & 0xff00  | (m_RMessage.DATA[3] & 0xff))/STEER_FACTOR;
+        m_feedback_msg.brake = m_RMessage.DATA[5];
+        m_feedback_msg.alive = m_RMessage.DATA[7];
+        m_pub_feedback1.publish(m_feedback_msg);
         break;
 
     case CAN_FEEDBACK_ID_2:
         std::cout << "feedback_2" << std::endl;
 
-        m_feedback2_msg.encoder = (m_RMessage.DATA[3] & 0xff) << 24 |
+        m_feedback_msg.encoder = (m_RMessage.DATA[3] & 0xff) << 24 |
                                                                  (m_RMessage.DATA[2] & 0xff) << 16 |
                                                                                                 (m_RMessage.DATA[1] & 0xff) << 8  |
                                                                                                                                (m_RMessage.DATA[0] & 0xff) ;
-        m_feedback2_msg.brake_cmd_raw = m_RMessage.DATA[4];
-        m_feedback2_msg.brake_raw = m_RMessage.DATA[5];
-        m_feedback2_msg.brake_echo = m_RMessage.DATA[6];
-        m_feedback2_msg.brake_init_max = m_RMessage.DATA[7];
+        m_feedback_msg.brake_cmd_raw = m_RMessage.DATA[4];
+        m_feedback_msg.brake_raw = m_RMessage.DATA[5];
+        m_feedback_msg.brake_echo = m_RMessage.DATA[6];
+        m_feedback_msg.brake_init_max = m_RMessage.DATA[7];
 
-        m_pub_feedback2.publish(m_feedback2_msg);
+        m_pub_feedback2.publish(m_feedback_msg);
 
         break;
-
-    case TEST_ID:
-        m_test_msg.TestEncoder = m_RMessage.DATA[0] & 0xff |
-                (m_RMessage.DATA[1] & 0xff) << 8;
-        std::cout << "SAS DATA : "<<(int)m_test_msg.TestEncoder << std::endl;
-        m_pub_test.publish(m_test_msg);
-        break;
-
     default:
         std::cout << " None.. " << std::endl;
         break;

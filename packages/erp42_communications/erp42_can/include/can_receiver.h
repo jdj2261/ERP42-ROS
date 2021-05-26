@@ -16,32 +16,7 @@
 #include <PCANBasic.h>
 #include <ros/ros.h>
 
-#include <erp42_msgs/CANFeedBack1.h>
-#include <erp42_msgs/CANFeedBack2.h>
-#include <erp42_msgs/CANtest.h>
-
-//// feedback
-//typedef struct _erp42_to_pc_1
-//{
-//    uint8_t MODE;
-//    uint8_t MorA;
-//    uint8_t ESTOP;
-//    uint8_t GEAR;
-//    union speed{ uint8_t speed[2]; uint16_t _speed;}; union speed speed;
-//    union steer{ int8_t steer[2]; int16_t _steer;}; union steer steer;
-//    uint8_t brake = 0;
-//    uint8_t alive = 0;
-//}ERP2PC_1;
-
-//// feedback2
-//typedef struct _erp42_to_pc_2
-//{
-//    int32_t Encoder[4];
-//    uint8_t Brake_Cmd_Raw;
-//    uint8_t Brake_Raw;
-//    uint8_t Brake_Echo;
-//    uint8_t Brake_Init_Max;
-//}ERP2PC_2;
+#include <erp42_msgs/CANFeedBack.h>
 
 namespace unmansol
 {
@@ -49,44 +24,41 @@ namespace erp42
 {
 namespace can
 {
-class ERP42Receiver
-{
-public:
-    ERP42Receiver();
-    virtual ~ERP42Receiver()
+    class ERP42Receiver
     {
-        std::cout << " Receiver Finished... " << std::endl;
-    }
+    public:
+        ERP42Receiver();
+        virtual ~ERP42Receiver()
+        {
+            std::cout << " Receiver Finished... " << std::endl;
+        }
 
-    bool Connect();
-    void Init_node();
-    void Read();
-    void Update();
+        bool Connect();
+        void InitNode();
+        void Read();
+        void Update();
 
-    bool isConnect;
+        bool isConnect;
 
 
-protected:
-    TPCANMsg m_RMessage;
+    private:
+        TPCANMsg m_RMessage;
 
-    TPCANStatus m_RStatus;
+        TPCANStatus m_RStatus;
 
-    //  ERP2PC_1 m_erp2pc_1;
-    //  ERP2PC_2 m_erp2pc_2;
+        //  ERP2PC_1 m_erp2pc_1;
+        //  ERP2PC_2 m_erp2pc_2;
 
-    ros::NodeHandle m_nh;
-    ros::Publisher m_pub_feedback1;
-    ros::Publisher m_pub_feedback2;
+        ros::NodeHandle m_nh;
+        ros::Publisher m_pub_feedback1;
+        ros::Publisher m_pub_feedback2;
 
-    std::string ns_;
+        std::string ns_;
 
-    erp42_msgs::CANFeedBack1 m_feedback1_msg;
-    erp42_msgs::CANFeedBack2 m_feedback2_msg;
+        erp42_msgs::CANFeedBack m_feedback_msg;
+        ros::Publisher m_pub_test;
 
-    ros::Publisher m_pub_test;
-    erp42_msgs::CANtest m_test_msg;
-
-}; // class ERP42Receiver
+    }; // class ERP42Receiver
 } // namespace can
 } // namespace erp42
 } // namespace unmansol

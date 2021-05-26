@@ -2,19 +2,19 @@
 
 using namespace unmansol::erp42;
 
-ERP42Interface::ERP42Interface():
-    m_odom_x(0.0),
-    m_odom_y(0.0),
-    m_odom_yaw(0.0),
-    m_linear_vel(0.0),
-    m_angular_vel(0.0),
-    m_wheel_base(0.0),
-    m_steer_angle(0.0),
-    m_delta_encoder(0),
-    m_nh("~"),
-    m_encoder(0),
-    m_last_encoder(0),
-    m_wheel_pos(0.0)
+ERP42Interface::ERP42Interface()
+    : m_odom_x(0.0),
+      m_odom_y(0.0),
+      m_odom_yaw(0.0),
+      m_linear_vel(0.0),
+      m_angular_vel(0.0),
+      m_wheel_base(0.0),
+      m_steer_angle(0.0),
+      m_delta_encoder(0),
+      m_nh("~"),
+      m_encoder(0),
+      m_last_encoder(0),
+      m_wheel_pos(0.0)
 {
     InitNode();
 }
@@ -29,9 +29,7 @@ void ERP42Interface::InitNode()
         m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback2",1, &ERP42Interface::CANEncoderCallback, this);
     }
     else
-    {
         m_sub_encoder = m_nh.subscribe(this->ns_ + "/feedback",1,&ERP42Interface::SerialDriveCallback, this);
-    }
 }
 
 // *****************************************************************************
@@ -75,12 +73,12 @@ void ERP42Interface::SetParams(const double &wheel_radius,
 
 }
 
-void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg)
+void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack::Ptr &msg)
 {
     m_encoder = msg->encoder;
 }
 
-void ERP42Interface::CANSteerCallback(const erp42_msgs::CANFeedBack1::Ptr &msg)
+void ERP42Interface::CANSteerCallback(const erp42_msgs::CANFeedBack::Ptr &msg)
 {
     m_steer_angle = DEG2RAD(msg->steer);
 }
