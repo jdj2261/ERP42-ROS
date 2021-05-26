@@ -63,8 +63,6 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
    - Press esc key and enter :wq to save and exit.
    ~~~
 
-
-
 ### Demo 
 
 There are two ways to use this package.
@@ -114,21 +112,14 @@ It can be used in **real environment** and **virtual environment** using Gazebo 
 **Gazebo**
 
 
-- excute track demo
+- excute **virtual track demo** recommended for **line tracking**.
 
   ` roslaunch erp42_vehicle_gazebo erp42_track_gazebo.launch`
 
   <left><img src="../doc/erp42_track.png" width="500"/></left>
 
-- excute virtual demo
+- excute **virtual environment** demo recommended for **slam and navigation**.
 
   ` roslaunch erp42_vehicle_gazebo erp42_vehicle_gazebo.launch`
   
   <left><img src="../doc/erp42_gazebo.png" width="500"/></left>
-
-### TODO
-
-**[ ]** Cartographer
-
-
-
