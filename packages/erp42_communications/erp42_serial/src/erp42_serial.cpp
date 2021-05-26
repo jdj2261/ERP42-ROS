@@ -9,11 +9,11 @@ ERP42Serial::ERP42Serial(
     m_nh("~"),
     m_loop(50)
 {
-    Init_data();
-    Update_node();
+    InitData();
+    UpdateNode();
 }
 
-void ERP42Serial::Init_data()
+void ERP42Serial::InitData()
 {
     m_pc2erp.speed._speed = 0x00;
     m_pc2erp.steer._steer = 0x00;
@@ -28,7 +28,7 @@ bool ERP42Serial::Open()
     return true;
 }
 
-void ERP42Serial::Update_node()
+void ERP42Serial::UpdateNode()
 {
     // DEBUG MODE
     if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug))

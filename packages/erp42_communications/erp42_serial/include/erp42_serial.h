@@ -69,8 +69,8 @@ namespace erp42
         PC2ERP m_pc2erp;
         uint8_t m_AlvCnt;
 
-        void Init_data();
-        void Update_node();
+        void InitData();
+        void UpdateNode();
         void writeUpdate(unsigned char (&buffer)[NUM_WRITE]);
         void readUpdate();
 

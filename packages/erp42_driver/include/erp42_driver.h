@@ -31,15 +31,15 @@ namespace erp42
     class ERP42Driver
     {
     public:
-        ERP42Driver();
-        virtual ~ERP42Driver()
+        explicit ERP42Driver();
+        ~ERP42Driver() noexcept
         {
             std::cout << "Driver Finished... " << std::endl;
         }
         void Run();
 
     private:
-        unmansol::erp42::ERP42Interface erp42_interface_;
+        std::shared_ptr<ERP42Interface> erp42_interface_;
 
         ros::NodeHandle m_nh;
         ros::Rate rate_;
@@ -66,8 +66,8 @@ namespace erp42
         uint8_t m_mode_EStop;
         uint8_t m_mode_Gear;
 
-        void Init_param();
-        void Init_node();
+        void InitParam();
+        void InitNode();
         void Update(const ros::Time &current_time);
 
         // Callback (ROS)

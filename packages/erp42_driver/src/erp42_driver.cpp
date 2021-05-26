@@ -3,6 +3,7 @@
 using namespace unmansol::erp42;
 
 ERP42Driver::ERP42Driver():
+    erp42_interface_(new ERP42Interface()),
     m_nh("~"),
     rate_(50),
     m_odom_broadcaster{},
@@ -13,12 +14,12 @@ ERP42Driver::ERP42Driver():
     m_mode_EStop(0),
     m_mode_Gear(0)
 {
-    Init_param();
-    Init_node();
-    erp42_interface_.ResetOdometry();
+    InitParam();
+    InitNode();
+    erp42_interface_->ResetOdometry();
 }
 
-void ERP42Driver::Init_param()
+void ERP42Driver::InitParam()
 {
     // DEBUG MODE
     if (ros :: console :: set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
@@ -42,17 +43,17 @@ void ERP42Driver::Init_param()
     m_nh.param<double>("max_steer_angle", max_steer_angle, max_steer_angle);
     m_nh.param<double>("min_steer_angle", min_steer_angle, min_steer_angle);
 
-    erp42_interface_.SetParams(wheel_radius, wheel_base, wheel_tread,
+    erp42_interface_->SetParams(wheel_radius, wheel_base, wheel_tread,
                                max_vel, min_vel, max_steer_angle, min_steer_angle);
 }
 
-void ERP42Driver::Init_node()
+void ERP42Driver::InitNode()
 {
     m_pub_odom = m_nh.advertise<nav_msgs::Odometry>("/odom",1);
-    m_pub_drive = m_nh.advertise<erp42_msgs::DriveCmd>(erp42_interface_.ns_+"/drive",1);
-    m_pub_mode = m_nh.advertise<erp42_msgs::ModeCmd>(erp42_interface_.ns_+"/mode",1);
+    m_pub_drive = m_nh.advertise<erp42_msgs::DriveCmd>(erp42_interface_->ns_+"/drive",1);
+    m_pub_mode = m_nh.advertise<erp42_msgs::ModeCmd>(erp42_interface_->ns_+"/mode",1);
     m_sub_cmd_vel = m_nh.subscribe("/cmd_vel", 1, &ERP42Driver::CmdVelCallback, this);
-    m_sub_mode = m_nh.subscribe(erp42_interface_.ns_+"/without_gear_mode", 1, &ERP42Driver::ModeCallback, this);
+    m_sub_mode = m_nh.subscribe(erp42_interface_->ns_+"/without_gear_mode", 1, &ERP42Driver::ModeCallback, this);
 }
 
 void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
@@ -61,7 +62,7 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
     const double linear_vel = msg->linear.x;
     const double angular_vel = msg->angular.z;
     double radius = linear_vel / angular_vel;
-    double steering_angle = atan(erp42_interface_.m_wheel_base / radius);
+    double steering_angle = atan(erp42_interface_->m_wheel_base / radius);
 
     if (linear_vel == 0.0 || angular_vel == 0.0)
     {
@@ -99,33 +100,32 @@ void ERP42Driver::Update(const ros::Time &current_time)
 {
     geometry_msgs::TransformStamped odom_trans;
     nav_msgs::Odometry odom;
-    geometry_msgs::Quaternion odom_quat {tf::createQuaternionMsgFromYaw(erp42_interface_.m_odom_yaw)};
+    geometry_msgs::Quaternion odom_quat {tf::createQuaternionMsgFromYaw(erp42_interface_->m_odom_yaw)};
 
     odom_trans.header.stamp = current_time;
     odom_trans.header.frame_id = "odom";
     odom_trans.child_frame_id = "base_link";
 
-    odom_trans.transform.translation.x = erp42_interface_.m_odom_x;
-    odom_trans.transform.translation.y = erp42_interface_.m_odom_y;
+    odom_trans.transform.translation.x = erp42_interface_->m_odom_x;
+    odom_trans.transform.translation.y = erp42_interface_->m_odom_y;
     odom_trans.transform.translation.z = 0.0;
     odom_trans.transform.rotation = odom_quat;
 
     odom.header.stamp = current_time;
     odom.header.frame_id = "odom";
 
-    odom.pose.pose.position.x = erp42_interface_.m_odom_x;
-    odom.pose.pose.position.y = erp42_interface_.m_odom_y;
+    odom.pose.pose.position.x = erp42_interface_->m_odom_x;
+    odom.pose.pose.position.y = erp42_interface_->m_odom_y;
     odom.pose.pose.position.z = 0;
     odom.pose.pose.orientation = odom_quat;
 
     odom.child_frame_id = "base_link";
-    odom.twist.twist.linear.x = erp42_interface_.m_linear_vel;
+    odom.twist.twist.linear.x = erp42_interface_->m_linear_vel;
     odom.twist.twist.linear.y = 0;
-    odom.twist.twist.angular.z = erp42_interface_.m_angular_vel;
+    odom.twist.twist.angular.z = erp42_interface_->m_angular_vel;
 
     m_odom_broadcaster.sendTransform(odom_trans);
     m_pub_odom.publish(odom);
-
 }
 
 void ERP42Driver::Run()
@@ -139,7 +139,7 @@ void ERP42Driver::Run()
 
         double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*(1e-9);
 
-        erp42_interface_.CalculateOdometry(diff_time);
+        erp42_interface_->CalculateOdometry(diff_time);
         Update(m_current_time);
         rate_.sleep();  // rate is 50hz
     }

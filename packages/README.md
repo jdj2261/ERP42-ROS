@@ -22,8 +22,8 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
 
 ### Usage
 
-<details>
-  <summary>Adding a source workspace</summary> 
+- Adding a source workspace
+
 
 1. Create a new workspace
 
@@ -63,7 +63,7 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
    - Press esc key and enter :wq to save and exit.
    ~~~
 
-</details>
+
 
 ### Demo 
 
@@ -100,31 +100,31 @@ It can be used in **real environment** and **virtual environment** using Gazebo 
 
   </details>
 
-<details>
-  <summary>Real environment</summary> 
+**Real environment** 
 
-- core package
+
+- excute core package
 
   `$ roslaunch erp42_bringup erp42_core.launch`
 
-- velodyne vlp-16 package (optional)
+- excute velodyne vlp-16 package (optional)
 
   `$ roslaunch erp42_bringup erp42_velodyne.launch`
 
-</details>
+**Gazebo**
 
-<details>
-  <summary>Gazebo</summary> 
 
-- track demo
+- excute track demo
 
   ` roslaunch erp42_vehicle_gazebo erp42_track_gazebo.launch`
 
-- virtual demo
+  <left><img src="../doc/erp42_track.png" width="500"/></left>
+
+- excute virtual demo
 
   ` roslaunch erp42_vehicle_gazebo erp42_vehicle_gazebo.launch`
-
-</details>
+  
+  <left><img src="../doc/erp42_gazebo.png" width="500"/></left>
 
 ### TODO
 

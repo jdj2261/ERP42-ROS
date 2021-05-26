@@ -2,8 +2,6 @@
 
 using namespace unmansol::erp42;
 
-static constexpr double TICK2RAD {0.06283185307}; // 3.6[deg] * 3.14159265359 / 180 = 0.06283185307
-
 ERP42Interface::ERP42Interface():
     m_odom_x(0.0),
     m_odom_y(0.0),
@@ -18,10 +16,10 @@ ERP42Interface::ERP42Interface():
     m_last_encoder(0),
     m_wheel_pos(0.0)
 {
-    Init_node();
+    InitNode();
 }
 
-void ERP42Interface::Init_node()
+void ERP42Interface::InitNode()
 {
     ns_ = ros::this_node::getNamespace();
 
@@ -76,7 +74,6 @@ void ERP42Interface::SetParams(const double &wheel_radius,
     ROS_INFO("Min Steer Angle : %lf [degree]", m_min_steer_angle);
 
 }
-
 
 void ERP42Interface::CANEncoderCallback(const erp42_msgs::CANFeedBack2::Ptr &msg)
 {
