@@ -84,7 +84,7 @@ void SerialPort::Configure(){
         cout << "\033[1;43mBaudRate : " << m_baudrate << " StopBits = 1, Parity = None\033[0m\n" << endl;
 }
 
-bool SerialPort::Read(unsigned char* rpacket, int packetsize)
+bool SerialPort::Read(unsigned char* rpacket, const size_t &packetsize)
 {
     if (fd == 0)
     {
@@ -104,26 +104,15 @@ bool SerialPort::Read(unsigned char* rpacket, int packetsize)
 
     return true;
 }
-bool SerialPort::Read(string& data)
-{
-    data.clear();
-    if (fd == 0){
-        cout << "Read was called but file descriptor was 0, file has not been opened" << endl;
-        return false;
-    }
-    ssize_t n = read(fd, &readBuffer[0], defaultReadBufferSize);
-    data = string(&readBuffer[0], n);
-    return true;
-}
 
-bool SerialPort::Write(unsigned char*  wpacket, int packetsize)
+bool SerialPort::Write(unsigned char* wpacket, const size_t &packetsize)
 {
     if (fd == 0)
     {
         cout << "Write was called but file descriptor was 0, file has not been opened" << endl;
         return false;
     }
-    int writeResult = write(fd, wpacket, packetsize);
+    ssize_t writeResult = write(fd, wpacket, packetsize);
     if(writeResult == -1){
         cout << "Write Packet failed" << endl;
         return false;
@@ -131,17 +120,3 @@ bool SerialPort::Write(unsigned char*  wpacket, int packetsize)
     return true;
 }
 
-bool SerialPort::Write(const string& data)
-{
-    if (fd == 0)
-    {
-        cout << "Write was called but file descriptor was 0, file has not been opened" << endl;
-        return false;
-    }
-    int writeResult = write(fd, data.c_str(), data.size());
-    if(writeResult == -1){
-        cout << "Write failed" << endl;
-        return false;
-    }
-    return true;
-}

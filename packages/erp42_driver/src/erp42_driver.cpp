@@ -21,8 +21,8 @@ ERP42Driver::ERP42Driver():
 void ERP42Driver::Init_param()
 {
     // DEBUG MODE
-    if (ros :: console :: set_logger_level (ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
-        ros :: console :: notifyLoggerLevelsChanged ();
+    if (ros :: console :: set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros :: console :: levels :: Debug)) {
+        ros :: console :: notifyLoggerLevelsChanged();
     }
 
     // Initialize [m]
@@ -69,7 +69,8 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
         steering_angle = 0.0;
     }
 
-    m_mode_Gear = (linear_vel >= 0) ? FORWARD : REVERSE ;
+    m_mode_Gear = (linear_vel >= 0) ? static_cast<uint8_t>(GEAR::FORWARD)
+                                    : static_cast<uint8_t>(GEAR::REVERSE);
     m_mode_msg.MorA = m_mode_MorA;
     m_mode_msg.EStop = m_mode_EStop;
     m_mode_msg.Gear = m_mode_Gear;
@@ -86,20 +87,12 @@ void ERP42Driver::CmdVelCallback(const geometry_msgs::Twist::Ptr &msg)
 
     m_pub_mode.publish(m_mode_msg);
     m_pub_drive.publish(m_drive_msg);
-
-    //  ROS_DEBUG_STREAM_NAMED("test",
-    //                         "Added values to command. "
-    //                         << "KPH: "   << m_drive_msg.KPH << ", "
-    //                         << "DEG: "   << m_drive_msg.Deg << ", ");
 }
 
 void ERP42Driver::ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg)
 {
     m_mode_MorA = msg->MorA;
     m_mode_EStop = msg->EStop;
-    //  std::cout << " MorA : " << std::hex << (int)m_mode_MorA ;
-    //  std::cout << " EStop : " << std::hex << (int)m_mode_MorA ;
-
 }
 
 void ERP42Driver::Update(const ros::Time &current_time)
@@ -139,19 +132,15 @@ void ERP42Driver::Run()
 {
     while(m_nh.ok())
     {
+        ros::spinOnce();
         m_current_time = ros::Time::now();
         m_delta_time = m_current_time - m_last_time;
         m_last_time = m_current_time;
 
-        //    std::cout << "Loop Time : "<<m_delta_time << " ";
         double diff_time = double(m_delta_time.sec) + double(m_delta_time.nsec)*(1e-9);
 
         erp42_interface_.CalculateOdometry(diff_time);
         Update(m_current_time);
-
-        //    std::cout << erp42_interface_.m_delta_encoder << std::endl;
-
-        ros::spinOnce();
         rate_.sleep();  // rate is 50hz
     }
 }

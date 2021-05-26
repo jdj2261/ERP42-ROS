@@ -5,10 +5,12 @@ using namespace unmansol::erp42;
 ERP42Serial::ERP42Serial(
         const char *device_name,
         int serial_baudrate):
-    serial_port_(device_name, serial_baudrate),
-    m_nh("~")
+    serial_port_(new SerialPort(device_name, serial_baudrate)),
+    m_nh("~"),
+    m_loop(50)
 {
     Init_data();
+    Update_node();
 }
 
 void ERP42Serial::Init_data()
@@ -20,7 +22,7 @@ void ERP42Serial::Init_data()
 
 bool ERP42Serial::Open()
 {
-    bool is_opend = serial_port_.Open();
+    bool is_opend = serial_port_->Open();
     if (!is_opend)
         return false;
     return true;
@@ -45,7 +47,7 @@ void ERP42Serial::Write()
     //  std::cout << "test" << std::endl;
     unsigned char writeBuffer[NUM_WRITE];
     writeUpdate(writeBuffer);
-    serial_port_.Write(writeBuffer,NUM_WRITE);
+    serial_port_->Write(writeBuffer,NUM_WRITE);
     m_pub_cmdcontrol.publish(m_cmdcontrol_msg);
 }
 
@@ -86,7 +88,7 @@ void ERP42Serial::writeUpdate(unsigned char (&buffer)[NUM_WRITE])
 
 bool ERP42Serial::Read()
 {
-    if (!serial_port_.Read(m_read_data, NUM_READ))
+    if (!serial_port_->Read(m_read_data, NUM_READ))
         return false;
     readUpdate();
     return true;
@@ -130,6 +132,25 @@ void ERP42Serial::readUpdate()
         m_feedback_msg.alive    = m_read_data[idx+15];
 
         m_pub_feedback.publish(m_feedback_msg);
+    }
+}
+
+void ERP42Serial::ERP42Serial::Run()
+{
+    if (!this->Open())
+        return;
+
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        if (!this->Read())
+        {
+            std::cout << "\033[1;33mNo data comes in.\033[0m" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            continue;
+        }
+        this->Write();
+        m_loop.sleep();
     }
 }
 

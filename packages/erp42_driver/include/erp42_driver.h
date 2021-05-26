@@ -21,62 +21,60 @@ namespace unmansol
 {
 namespace erp42
 {
-
-enum GEAR { FORWARD=0x00, NEUTRAL, REVERSE};
-
-class ERP42Driver
-{
-public:
-    ERP42Driver();
-    virtual ~ERP42Driver()
+    enum class GEAR
     {
-        std::cout << "Driver Finished... " << std::endl;
-    }
+        FORWARD=0x00,
+        NEUTRAL,
+        REVERSE,
+    };
 
-    void Init_param();
-    void Init_node();
+    class ERP42Driver
+    {
+    public:
+        ERP42Driver();
+        virtual ~ERP42Driver()
+        {
+            std::cout << "Driver Finished... " << std::endl;
+        }
+        void Run();
 
-    void Run();
-    void Update(const ros::Time &current_time);
+    private:
+        unmansol::erp42::ERP42Interface erp42_interface_;
 
-    // Callback (ROS)
-    void CmdVelCallback(const geometry_msgs::Twist::Ptr &msg);
-    void ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg);
-    ;
+        ros::NodeHandle m_nh;
+        ros::Rate rate_;
 
-private:
-    unmansol::erp42::ERP42Interface erp42_interface_;
+        ros::Publisher m_pub_odom;
+        ros::Publisher m_pub_drive;
+        ros::Publisher m_pub_mode;
 
-protected:
-    ros::NodeHandle m_nh;
-    ros::Rate rate_;
+        ros::Subscriber m_sub_cmd_vel;
+        ros::Subscriber m_sub_mode;
 
-    ros::Publisher m_pub_odom;
-    ros::Publisher m_pub_drive;
-    ros::Publisher m_pub_mode;
+        tf::TransformBroadcaster m_odom_broadcaster;
 
-    ros::Publisher m_pub_test;
+        ros::Duration m_delta_time;
+        ros::Time m_current_time;
+        ros::Time m_last_time;
 
-    ros::Subscriber m_sub_cmd_vel;
-    ros::Subscriber m_sub_mode;
+        erp42_msgs::DriveCmd m_drive_msg;
+        erp42_msgs::ModeCmd m_mode_msg;
 
-    tf::TransformBroadcaster m_odom_broadcaster;
+        double m_last_odom_x;
 
-    ros::Duration m_delta_time;
-    ros::Time m_current_time;
-    ros::Time m_last_time;
+        uint8_t m_mode_MorA;
+        uint8_t m_mode_EStop;
+        uint8_t m_mode_Gear;
 
-    erp42_msgs::DriveCmd m_drive_msg;
-    erp42_msgs::ModeCmd m_mode_msg;
+        void Init_param();
+        void Init_node();
+        void Update(const ros::Time &current_time);
 
-    double m_last_odom_x;
+        // Callback (ROS)
+        void CmdVelCallback(const geometry_msgs::Twist::Ptr &msg);
+        void ModeCallback(const erp42_msgs::ModeCmd::Ptr &msg);
 
-    uint8_t m_mode_MorA;
-    uint8_t m_mode_EStop;
-    uint8_t m_mode_Gear;
-    //  const char m_mode_alive;
-
-}; // class ERP42Driver
+    }; // class ERP42Driver
 
 } // erp42
 } // unmansol

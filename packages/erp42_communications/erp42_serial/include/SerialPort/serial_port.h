@@ -42,17 +42,11 @@ public:
         std::cout << "Serial Closed..." << std::endl;
     }
 
-    ros::NodeHandle m_nh;
-    std::string ns_;
-
     bool Open();
-    void Close();
-    void Configure();
+    bool Read(unsigned char* rpacket, const size_t &packetsize);
+    bool Write(unsigned char* wpacket, const size_t &packetsize);
 
-    bool Read(unsigned char* rpacket, int packetsize);
-    bool Read(std::string& data);
-    bool Write(unsigned char* wpacket, int packetsize);
-    bool Write(const std::string& data);
+    void Close();
 
 private:
     const char *m_device_name;
@@ -60,6 +54,7 @@ private:
     int fd; // File Descriptor
     std::vector<char> readBuffer;
     const static unsigned char defaultReadBufferSize = 255;
+    void Configure();
 
 }; // class SerialInterface
 } // namespace erp42
