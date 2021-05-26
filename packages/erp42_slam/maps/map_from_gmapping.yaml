@@ -1,4 +1,4 @@
-image: test.pgm
+image: map_from_gmapping.pgm
 resolution: 0.050000
 origin: [-20.000000, -20.000000, 0.000000]
 negate: 0
