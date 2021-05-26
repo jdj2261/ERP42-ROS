@@ -11,7 +11,7 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
 - ROS Dependencies
 
   ~~~
-  $ sudo apt install ros-melodic-serial ros-melodic-velodyne-* ros-melodic-pcl-* ros-melodic-geodesy ros-melodic-ros-control ros-melodic-map-server ros-melodic-twist-keyboard
+  $ sudo apt install ros-melodic-serial ros-melodic-velodyne-* ros-melodic-pcl-* ros-melodic-geodesy ros-melodic-ros-control ros-melodic-map-server ros-melodic-move-base ros-melodic-twist-keyboard
   ~~~
 
 - Python Dependencies
