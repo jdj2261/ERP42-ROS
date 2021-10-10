@@ -11,14 +11,51 @@ If it is not installed, go to [here](http://wiki.ros.org/melodic/Installation/Ub
 - ROS Dependencies
 
   ~~~
-  $ sudo apt install ros-melodic-serial ros-melodic-velodyne-* ros-melodic-pcl-* ros-melodic-geodesy ros-melodic-ros-control ros-melodic-map-server ros-melodic-move-base ros-melodic-twist-keyboard
+  $ sudo apt install ros-melodic-serial ros-melodic-velodyne* ros-melodic-pcl* ros-melodic-geodesy ros-melodic-ros-control ros-melodic-map-server ros-melodic-move-base ros-melodic-teleop-twist-keyboard ros-melodic-serial*
   ~~~
 
 - Python Dependencies
 
-  ~~~
+  ~~~`
   $ pip install keyboard Sphinx
   ~~~
+
+- Install PCAN Driver Package
+
+  - Unzip after download [Driver Package](https://www.peak-system.com/fileadmin/media/linux/index.htm)
+
+  - Install required package
+
+    ~~~
+    $ sudo apt-get update -y
+    $ sudo apt-get install -y gcc-multilib
+    $ sudo apt-get install libelf-dev
+    $ sudo apt-get install libpopt-dev
+    ~~~
+
+  - Go to the unzipped folder and make
+
+    ~~~
+    $ cd peak-linux-driver-8.10.1
+    $ make
+    ~~~
+
+  - Build and install
+
+    ~~~
+    $ make -C lib 
+    $ make -C test 
+    $ sudo make install 
+    ~~~
+
+  - Check that the installation was successful
+
+    ~~~
+    $ sudo modprobe pcan
+    $ pcaninfo
+    ~~~
+
+    
 
 ### Usage
 
